@@ -1,0 +1,45 @@
+.shopBy ul li {
+
+   padding: 1rem;
+}
+
+.shopBy {
+    display: flex;
+    justify-content: center;
+   
+}
+
+.shopBy ul div img {
+    width: 8rem ;
+    transition: width 0.5s ease;
+  
+}
+
+.shopBy ul div  {
+    padding: 2rem;
+}
+
+
+.shopBy ul div img:hover {
+
+width: 10rem;
+}
+
+.shopBy ul div:hover {
+
+   cursor: pointer;
+
+}
+
+
+.simg {
+    border: 5px solid black;
+    height: 25vh;
+    width: 100%;
+}
+
+.items1:hover {
+
+    cursor: pointer;
+
+}
