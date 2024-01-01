@@ -15,7 +15,7 @@ const Contact = () => {
   async function handleRegister(e) {
     e.preventDefault();
 
-   const log = await fetch('http://localhost:3000/login', {
+   const log = await fetch('https://ecommerce-l97b.onrender.com/login', {
   
     method : 'POST', 
     headers : {
@@ -38,7 +38,7 @@ const Contact = () => {
           try {
             console.log("Email : " + email);
             console.log("Pass : "+ password);
-            const response = await fetch('http://localhost:3000/register', {
+            const response = await fetch('https://ecommerce-l97b.onrender.com/register', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
