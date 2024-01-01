@@ -12,6 +12,7 @@ import elect5 from './images/elect5.jpeg';
 import elect6 from './images/elect6.jpeg';
 import elect7 from './images/elect7.jpeg';
 import { useNavigate } from 'react-router-dom';
+import { PropagateLoader } from 'react-spinners';
 
 const Electronics = () => {
 

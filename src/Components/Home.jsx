@@ -35,7 +35,7 @@ const Home = () => {
       
     setTimeout(() => {
       setLoad(false);
-    }, 500)
+    }, 1000)
 
   }, [])
 
@@ -100,7 +100,7 @@ const Home = () => {
      <div className="sections">
 
       <div className="electronics">
-        <Electronics />
+         <Electronics />
       </div>
 
       <div className="luxury">
