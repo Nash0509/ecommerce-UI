@@ -11,6 +11,7 @@ import Luxury from './Luxury';
 import { useNavigate } from 'react-router-dom';
 import { HashLoader } from 'react-spinners';
 import Tooltip from '@mui/material/Tooltip';
+import {toast} from 'react-toastify'
 
 // Import images
 import image from './images/elect.webp';
@@ -30,6 +31,8 @@ const Home = () => {
   const [load, setLoad] = useState(true);
 
   useEffect(() => {
+
+   toast.info("This site is running on free hosting service, so fetching data may take some time...");
 
     console.log("Width : "+ window.innerWidth);
       
