@@ -65,7 +65,7 @@ const Navbar = () => {
     <div className='flex bg-black text-white p-5'>
 
       <div className="mx-7 commerce text-5xl"><Link
-      to='/home'>Ecommerce</Link></div>
+      to='/'>Ecommerce</Link></div>
 
       <div className='hidden lg:block '>
       <Autocomplete
@@ -111,7 +111,7 @@ const Navbar = () => {
 
 
      <ul className='flex ul'>
-      <li><Link to='/home'>Home</Link></li>
+      <li><Link to='/'>Home</Link></li>
       <li className='flex'>Best <span>deals</span></li>
       <li onClick={() => navigate('/cart/1')}>
       <IconButton aria-label="cart">
