@@ -15,46 +15,78 @@ const Contact = () => {
   async function handleRegister(e) {
     e.preventDefault();
 
-   if(!sessionStorage.getItem('token')) {
-    try {
-      console.log("Email : " + email);
-      console.log("Pass : "+ password);
-      const response = await fetch('https://ecommerce-l97b.onrender.com/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      });
+   const log = await fetch('http://localhost:3000/login', {
+  
+    method : 'POST', 
+    headers : {
+     'Content-Type' : 'application/json'
+    },
+    body : JSON.stringify({
 
-      if (response.ok) {
-        const data = await response.json();
-        setToken(data.token);
-        sessionStorage.setItem('token', data.token);
-        console.log(data.token)
-        console.log('Registration successful:', data);
-        toast.success('You have been registered successfully!');
-        navigate('/cart/1')
-      } 
-      else if(response.status === 422) {
-        const data = await response.json();
-        console.log(data.message);
-        toast.warning("Wrong email/password...");
+     email : email,
+     password : password,
+
+    })
+
+   })
+
+   if(log.status === 404) {
+
+      async function abc() {
+
+        if(!sessionStorage.getItem('token')) {
+          try {
+            console.log("Email : " + email);
+            console.log("Pass : "+ password);
+            const response = await fetch('http://localhost:3000/register', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                email: email,
+                password: password,
+              }),
+            });
+      
+            if (response.ok) {
+              const data = await response.json();
+              setToken(data.token);
+              sessionStorage.setItem('token', data.token);
+              console.log(data.token)
+              console.log('Registration successful:', data);
+              toast.success('You have been registered successfully!');
+              navigate('/cart/1')
+            } 
+            else if(response.status === 422) {
+              const data = await response.json();
+              console.log(data.message);
+              toast.warning("Wrong email/password...");
+            }
+            else if(response.status === 400){
+              console.log(response.message);
+             toast.warning("An account with this email is already registered...");
+            }
+            else {
+              console.log("Wrong email or the password ");
+              toast.warning("Please enter a valid email...");
+            }
+          } catch (error) {
+            console.error('Error during registration:', error);
+            toast.error('An error occurred during registration. Please try again.');
+          }
+         }
+         else {
+          toast.warning("You are already registered");
+         }
+
       }
-      else {
-        console.log('Registration failed, invalid data');
-       toast.warning("Invalid details, try again...")
-      }
-    } catch (error) {
-      console.error('Error during registration:', error);
-      toast.error('An error occurred during registration. Please try again.');
-    }
+      abc();
+
    }
    else {
-    toast.warning("You are already registered");
+    console.log("Email already in use, consider logging in instead...");
+    toast.warning("Email already in use " );
    }
   }
 
