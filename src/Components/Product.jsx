@@ -156,7 +156,7 @@ const Product = () => {
       .then((res) => {
         console.log(res);
          toast.success("Item added to the cart successfully");
-         navigate('/cart/1');
+         setOpen(false);
       })
 
       }
@@ -229,9 +229,6 @@ const Product = () => {
           <Button variant='contained' color='primary' onClick={() => {
                 dispatch(addToCart({price : p.Price}));
                 handleAddToCart();
-                setTimeout(() => {
-                  window.location.reload();
-                }, 300)
               }}>Add to Cart&nbsp;<ShoppingCartIcon/></Button>
           </Typography>
         </Box>

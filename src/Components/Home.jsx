@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Suspense} from 'react';
 import '../Styles/home.css';
 import { useEffect, useState } from 'react';
 import Slider from 'react-slick';
@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { HashLoader } from 'react-spinners';
 import Tooltip from '@mui/material/Tooltip';
 import {toast} from 'react-toastify'
+
 
 // Import images
 import image from './images/elect.webp';
