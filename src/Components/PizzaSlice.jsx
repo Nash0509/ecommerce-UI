@@ -21,10 +21,13 @@ export const PizzaSlice = createSlice({
        },
        total : (state, action) => {
         state.total = action.payload.total;
+       },
+       minusOne : (state, action) => {
+       state.count = state.count - 1;
        }
     },
 })
 
-export const {addToCart, freshData, total} = PizzaSlice.actions;
+export const {addToCart, freshData, total, minusOne} = PizzaSlice.actions;
 
 export default PizzaSlice.reducer;

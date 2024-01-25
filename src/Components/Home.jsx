@@ -33,7 +33,7 @@ const Home = () => {
 
   useEffect(() => {
 
-   toast.info("This site is running on free hosting service, so fetching data may take some time...");
+   toast.info("Cold loading takes up to 20 seconds (free teir). Please wait...");
 
     console.log("Width : "+ window.innerWidth);
       

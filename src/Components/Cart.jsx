@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import {PropagateLoader} from 'react-spinners'
 import Tooltip from '@mui/material/Tooltip';
+import { minusOne } from './PizzaSlice';
 
 const style = {
   position: 'absolute',
@@ -37,6 +38,7 @@ const Cart = () => {
   const handleClose = () => setOpen(false);
 
   const total1 = useSelector((store) => store.pizza.total);
+  
 
   useEffect(() => {
       
@@ -87,9 +89,9 @@ const Cart = () => {
      .then((res) => res.json())
      .then((res) => {
      toast.success("Item removed from the cart successfully!");
-        setTimeout(() => {
-          window.location.reload();
-        }, 300)
+     setOpen(false);
+    setItems((pre) => pre.filter((pdt) => pdt._id !== id))
+     dispatch(minusOne());
      })
 
 
