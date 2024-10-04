@@ -1,97 +1,127 @@
-import React from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import {toast} from 'react-toastify';
-
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Login = () => {
-
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [pass, setPass] = useState();
-  const [token , setToken] = useState('');
+  const [token, setToken] = useState("");
 
- async function handleLogin(e) {
+  async function handleLogin(e) {
+    e.preventDefault();
 
-       e.preventDefault();
-
-    if(!sessionStorage.getItem('token')) {
+    if (!sessionStorage.getItem("token")) {
       try {
+        const log = await fetch("https://ecommerce-l97b.onrender.com/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+            password: pass,
+          }),
+        });
 
-        const log = await fetch('https://ecommerce-l97b.onrender.com/login', {
-  
-         method : 'POST', 
-         headers : {
-          'Content-Type' : 'application/json'
-         },
-         body : JSON.stringify({
-   
-          email : email,
-          password : pass,
-  
-         })
-  
-        })
-  
-        if(log.ok) {
-  
-        const res = await log.json();
-        console.log(res);
-        setToken(res.token);
-        sessionStorage.setItem('token', res.token);
-        console.log(token);
-        toast.success("Logged in successfully!");
-        navigate('/cart/1');
-        }
-        else if(log.status === 422) {
+        if (log.ok) {
+          const res = await log.json();
+          localStorage.setItem('token', res.token);
+          console.log(res);
+          setToken(res.token);
+          sessionStorage.setItem("token", res.token);
+          console.log(token);
+          toast.success("Logged in successfully!");
+          window.location.assign("/cart/1");
+        } else if (log.status === 422) {
           const data = await log.json();
           console.log(data.message);
           toast.warning("Wrong email/password...");
+        } else {
+          toast.error("Wrong email/password!");
         }
-        else {
-          toast.error("Wrong email/password!")
-        }
-  
-         }
-         catch (err) {
-  
-        toast.error("An error occured while logging in : "+  err.message);
-  
-         }
-    }
-    else {
-      toast.warning("You are already logged in / Your token expired, in that case logout...");
-    }
+      } catch (err) {
+        toast.error("An error occured while logging in : " + err.message);
       }
- 
-
+    } else {
+      toast.warning(
+        "You are already logged in / Your token expired, in that case logout..."
+      );
+    }
+  }
 
   return (
-    <div className='bg-[white] h-[100vh] flex justify-center flex-col ' style={{alignItems:'center'}}>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <form className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+          Log In
+        </h1>
 
-      <form className='bg-[azure] p-[3.5rem] rounded mb-[4rem] shadow-2xl '>
+        {/* Email Input */}
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-semibold mb-2"
+            htmlFor="email"
+          >
+            Email
+          </label>
+          <input
+            type="email"
+            placeholder="Enter your email"
+            required
+            className="w-full p-3 text-gray-900 rounded-lg bg-gray-100 border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition duration-150"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
 
-      <h1 className='text-[2rem] my-4 text-center'>LogIn</h1>
+        {/* Password Input */}
+        <div className="mb-6">
+          <label
+            className="block text-gray-700 text-sm font-semibold mb-2"
+            htmlFor="password"
+          >
+            Password
+          </label>
+          <input
+            type="password"
+            placeholder="Enter your password"
+            required
+            className="w-full p-3 text-gray-900 rounded-lg bg-gray-100 border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition duration-150"
+            onChange={(e) => setPass(e.target.value)}
+          />
+        </div>
 
-        <input type="email" placeholder='email' required className='p-3 text-center rounded bg-[black] text-white focus:border-[0px]' onChange={(e) => setEmail(e.target.value)}/><br />
+        {/* Submit Button */}
+        <div className="text-center">
+          <button
+            className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-150"
+            onClick={(e) => handleLogin(e)}
+          >
+            Submit
+          </button>
+        </div>
 
-        <input type="password" placeholder='password' required className='p-3 text-center rounded my-4 bg-[black] text-white' onChange={e => setPass(e.target.value)}/><br />
-
-       <div className='text-center'>
-       <button className='bg-[blue] p-3 rounded text-white' onClick={(e) => handleLogin(e)}><input type="submit" style={{display:'none'}}/>Submit</button>
-       </div>
-
+        {/* Forgot Password */}
+        <div className="text-center mt-4">
+          <a
+            href="/forgot-password"
+            className="text-sm text-blue-600 hover:underline"
+          >
+            Forgot your password?
+          </a>
+          {/* <a
+            href="/contact"
+            className="text-sm text-blue-600 hover:underline"
+          >
+            Register
+          </a> */}
+        </div>
       </form>
-
-      {/* <h1>Only for the subscribed members!</h1><br />
-      <button onClick={handleContent}>Content</button>
-
-      <h1 id='content'></h1> */}
-
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

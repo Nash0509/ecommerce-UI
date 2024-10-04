@@ -32,15 +32,9 @@ const Home = () => {
   const [load, setLoad] = useState(true);
 
   useEffect(() => {
-
-   toast.info("Cold loading takes up to 20 seconds (free teir). Please wait...");
-
-    console.log("Width : "+ window.innerWidth);
-      
     setTimeout(() => {
       setLoad(false);
     }, 1000)
-
   }, [])
 
   const navigate = useNavigate(); 
