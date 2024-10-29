@@ -8,6 +8,9 @@ import { useNavigate } from "react-router-dom";
 const Contact = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [DOB, setDOB] = useState("");
+  const [residence, setResidence] = useState("");
   const [token, setToken] = useState("");
 
   const navigate = useNavigate();
@@ -15,7 +18,7 @@ const Contact = () => {
   async function handleRegister(e) {
     e.preventDefault();
 
-    const log = await fetch("https://ecommerce-l97b.onrender.com/login", {
+    const log = await fetch("http://localhost:8000/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -23,65 +26,17 @@ const Contact = () => {
       body: JSON.stringify({
         email: email,
         password: password,
+        phone: phone,
+        DOB: DOB,
+        residence: residence,
       }),
     });
 
     if (log.status === 404) {
-      async function abc() {
-        if (!sessionStorage.getItem("token")) {
-          try {
-            console.log("Email : " + email);
-            console.log("Pass : " + password);
-            const response = await fetch(
-              "https://ecommerce-l97b.onrender.com/register",
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  email: email,
-                  password: password,
-                }),
-              }
-            );
-
-            if (response.ok) {
-              const data = await response.json();
-              setToken(data.token);
-              sessionStorage.setItem("token", data.token);
-              console.log(data.token);
-              localStorage.setItem("token", data.token);
-              console.log("Registration successful:", data);
-              toast.success("You have been registered successfully!");
-              navigate("/cart/1");
-            } else if (response.status === 422) {
-              const data = await response.json();
-              console.log(data.message);
-              toast.warning("Wrong email/password...");
-            } else if (response.status === 400) {
-              console.log(response.message);
-              toast.warning(
-                "An account with this email is already registered..."
-              );
-            } else {
-              console.log("Wrong email or the password ");
-              toast.warning("Please enter a valid email...");
-            }
-          } catch (error) {
-            console.error("Error during registration:", error);
-            toast.error(
-              "An error occurred during registration. Please try again."
-            );
-          }
-        } else {
-          toast.warning("You are already registered");
-        }
-      }
-      abc();
+      toast.warning("No account with this email exists, please register...");
+      navigate("/contact");
     } else {
-      console.log("Email already in use, consider logging in instead...");
-      toast.warning("Email already in use ");
+      toast.error("There was an error while logging in, please try again...");
     }
   }
 
@@ -118,6 +73,45 @@ const Contact = () => {
           className="w-full p-3 text-gray-900 rounded-lg bg-gray-200 border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition duration-150 mb-4"
           onChange={(e) => setPassword(e.target.value)}
         />
+        <label
+          className="block text-gray-700 text-sm font-semibold mb-2"
+          htmlFor="DOB"
+        >
+          DOB
+        </label>
+        <input
+          type="text"
+          placeholder="DOB"
+          required
+          className="w-full p-3 text-gray-900 rounded-lg bg-gray-200 border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition duration-150 mb-4"
+          onChange={(e) => setDOB(e.target.value)}
+        />
+        <label
+          className="block text-gray-700 text-sm font-semibold mb-2"
+          htmlFor="Phone No"
+        >
+          Phone No
+        </label>
+        <input
+          type="number"
+          placeholder="Phone No"
+          required
+          className="w-full p-3 text-gray-900 rounded-lg bg-gray-200 border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition duration-150 mb-4"
+          onChange={(e) => setPhone(e.target.value)}
+        />
+        <label
+          className="block text-gray-700 text-sm font-semibold mb-2"
+          htmlFor="Residence"
+        >
+          Residence
+        </label>
+        <input
+          type="text"
+          placeholder="Residence"
+          required
+          className="w-full p-3 text-gray-900 rounded-lg bg-gray-200 border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition duration-150 mb-4"
+          onChange={(e) => setResidence(e.target.value)}
+        />
 
         <div className="text-center">
           <button
@@ -127,20 +121,17 @@ const Contact = () => {
             Submit
           </button>
         </div>
-
-        <h1
-          className="text-sm text-center mt-6 underline text-blue-600 cursor-pointer hover:text-blue-800"
-          onClick={() => {
-            if (sessionStorage.getItem("token")) {
-              sessionStorage.removeItem("token");
-              toast.success("You have been logged out successfully!");
-            } else {
-              toast.warning("Log in or register first...");
-            }
-          }}
-        >
-          Logout
-        </h1>
+        <div className="text-center mt-4 flex justify-between">
+          <a
+            href="/forgotPassword"
+            className="text-sm text-blue-600 hover:underline"
+          >
+            Forgot your password?
+          </a>
+          <a href="/login" className="text-sm text-blue-600 hover:underline">
+            LogIn
+          </a>
+        </div>
       </form>
     </div>
   );

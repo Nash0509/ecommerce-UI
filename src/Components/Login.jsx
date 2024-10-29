@@ -112,12 +112,12 @@ const Login = () => {
           >
             Forgot your password?
           </a>
-          {/* <a
+          <a
             href="/contact"
             className="text-sm text-blue-600 hover:underline"
           >
             Register
-          </a> */}
+          </a>
         </div>
       </form>
     </div>

@@ -4,7 +4,12 @@ import "./index.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Login from "./Components/Login";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import Home from "./Components/Home";
 import Navbar from "./Components/Navbar";
 import Footer from "./Components/Footer";
@@ -13,7 +18,8 @@ import Cate from "./Components/Cate";
 import Cart from "./Components/Cart";
 import Checkout from "./Components/Checkout";
 import Profile from "./Components/Profile";
-import Contact from "./Components/Contact";
+import NotFound from "./Components/NotFound";
+import FotgotPass from "./Components/FotgotPass";
 
 const App = () => {
   return (
@@ -27,11 +33,20 @@ const App = () => {
         <Route path="/category/:id" element={<Cate />} />
         <Route path="/cart/:id" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
-        {sessionStorage.getItem('token') ? (
-          <Route path="/profile" element={<Profile />} />
-        ) : (
-          <Route path="/login" element={<Login />} />
-        )}
+        <Route
+          path="/profile"
+          element={
+            sessionStorage.getItem("token") ? (
+              <Profile />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route path="/login" element={<Login />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/forgotPassword" element={<FotgotPass />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
     </Router>
