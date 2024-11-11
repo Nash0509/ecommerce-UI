@@ -12,11 +12,12 @@ const Login = () => {
   const [token, setToken] = useState("");
 
   async function handleLogin(e) {
+    alert("Insode of the handle Login!");
     e.preventDefault();
 
     if (!sessionStorage.getItem("token")) {
       try {
-        const log = await fetch("https://ecommerce-l97b.onrender.com/login", {
+        const log = await fetch("http://localhost:8000/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -30,12 +31,12 @@ const Login = () => {
         if (log.ok) {
           const res = await log.json();
           localStorage.setItem('token', res.token);
-          console.log(res);
           setToken(res.token);
+          console.log(res);
+          localStorage.setItem('uid', res.result._id);
           sessionStorage.setItem("token", res.token);
-          console.log(token);
           toast.success("Logged in successfully!");
-          window.location.assign("/cart/1");
+          navigate("/cart/1");
         } else if (log.status === 422) {
           const data = await log.json();
           console.log(data.message);
@@ -47,10 +48,9 @@ const Login = () => {
         toast.error("An error occured while logging in : " + err.message);
       }
     } else {
-      toast.warning(
-        "You are already logged in / Your token expired, in that case logout..."
-      );
+        toast.error("You are not logged in, please login...");
     }
+    
   }
 
   return (
@@ -112,12 +112,7 @@ const Login = () => {
           >
             Forgot your password?
           </a>
-          <a
-            href="/contact"
-            className="text-sm text-blue-600 hover:underline"
-          >
-            Register
-          </a>
+           <p className="text-sm text-blue-600 hover:underline cursor-pointer" onClick={() => navigate('/contact')}>Register</p>
         </div>
       </form>
     </div>

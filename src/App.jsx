@@ -20,6 +20,7 @@ import Checkout from "./Components/Checkout";
 import Profile from "./Components/Profile";
 import NotFound from "./Components/NotFound";
 import FotgotPass from "./Components/FotgotPass";
+import BestDeals from "./Components/BestDeals";
 
 const App = () => {
   return (
@@ -39,7 +40,7 @@ const App = () => {
             sessionStorage.getItem("token") ? (
               <Profile />
             ) : (
-              <Navigate to="/login" />
+              <Navigate to="/" />
             )
           }
         />
@@ -47,6 +48,7 @@ const App = () => {
         <Route path="/contact" element={<Contact />} />
         <Route path="/forgotPassword" element={<FotgotPass />} />
         <Route path="*" element={<NotFound />} />
+        <Route path="/bestdeals" element={<BestDeals />}/>
       </Routes>
       <Footer />
     </Router>

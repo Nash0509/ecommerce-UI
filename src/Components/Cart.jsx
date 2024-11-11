@@ -91,7 +91,7 @@ const Cart = () => {
           dispatch(minusOne());
         });
     } catch (err) {
-      console.log("An error occurred while deleting");
+      toast.error("Its not you its us 😣, please try again...");
     }
   }
 

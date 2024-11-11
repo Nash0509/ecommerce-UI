@@ -105,8 +105,10 @@ const Navbar = () => {
           <li>
             <Link to="/">Home</Link>
           </li>
-          <li className="flex">
-            Best <span>deals</span>
+          <li>
+            <Link to="/bestdeals" className="flex">
+              Best <span>deals</span>
+            </Link>
           </li>
           <li onClick={() => navigate("/cart/1")}>
             <IconButton aria-label="cart">

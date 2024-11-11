@@ -1,28 +1,50 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import GhostLoader from "./GhostLoader";
 
 const Profile = () => {
   const navigate = useNavigate();
 
-  const [user, setUser] = useState({
-    name: "John Doe",
-    email: "johndoe@example.com",
-    address: "123 Main St, Springfield, USA",
-    phone: "+1 234 567 890",
-    profilePic: "https://via.placeholder.com/150",
-    orderHistory: [
-      { id: 1, date: "2024-09-30", total: "$250", status: "Delivered" },
-      { id: 2, date: "2024-09-15", total: "$120", status: "Shipped" },
-      { id: 3, date: "2024-08-28", total: "$450", status: "Cancelled" },
-    ],
-  });
+  const [profiledata, setProfileData] = useState({});
+  const [user, setUser] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    try {
+      fetch(`http://localhost:8000/profile/${localStorage.getItem("uid")}`)
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.success) {
+            setProfileData(res.result[0]);
+            console.log("Yahi pr wala data aa raha hai mere dost...");
+            console.log(res.result[0]);
+            const profile = res.result[0];
+            setUser({
+              name: profile.userName,
+              email: profile.email,
+              address: profile.residence,
+              phone: profile.phone,
+              DOB: profile.DOB,
+              profilePic: "https://via.placeholder.com/150",
+              orderHistory: profile.cart,
+            });
+            setLoading(false);
+          } else {
+            toast.error("An error occured while fetching the profle data...");
+          }
+        });
+    } catch (err) {
+      toast.error(
+        "An error occured while fetching the profile data, please try again..."
+      );
+    }
+  }, []);
 
   function handleDeleteHis(index1) {
-    alert("Yo this works...");
-
     const filteredArray = user.orderHistory.filter(
       (order, index) => index !== index1
     );
@@ -50,8 +72,10 @@ const Profile = () => {
       },
     }).then((result) => {
       if (result.isConfirmed) {
+        localStorage.removeItem("uid");
+        localStorage.removeItem("token");
         sessionStorage.removeItem("token");
-        window.location.assign('/login')
+        navigate("/login");
         Swal.fire("Logged out successfully!", "", "success");
       }
     });
@@ -84,16 +108,16 @@ const Profile = () => {
           <div className="md:col-span-2">
             <h2 className="text-xl font-semibold mb-4">Personal Information</h2>
             <p>
-              <strong>Name:</strong> {user.name}
+              <strong>Name:</strong> <>{loading ? <GhostLoader /> : user?.name}</>
             </p>
             <p>
-              <strong>Email:</strong> {user.email}
+              <strong>Email:</strong> <>{loading ? <GhostLoader /> : user?.email}</>
             </p>
             <p>
-              <strong>Phone:</strong> {user.phone}
+              <strong>Phone:</strong> <>{loading ? <GhostLoader /> : user?.phone}</>
             </p>
             <p>
-              <strong>Address:</strong> {user.address}
+              <strong>Address:</strong> <>{loading ? <GhostLoader /> : user?.address}</>
             </p>
             <div className="mt-4">
               <button className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 transition duration-200">
@@ -112,35 +136,39 @@ const Profile = () => {
         {/* Order History */}
         <div>
           <h2 className="text-xl font-semibold mb-4">Order History</h2>
-          <table className="w-full table-auto bg-gray-50 rounded-lg">
-            <thead className="bg-gray-200">
-              <tr>
-                <th className="px-4 py-2 text-left">Order ID</th>
-                <th className="px-4 py-2 text-left">Date</th>
-                <th className="px-4 py-2 text-left">Total</th>
-                <th className="px-4 py-2 text-left">Status</th>
-                <th className="px-4 py-2 text-left text-center">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {user.orderHistory.map((order, index) => (
-                <tr key={order.id} className="border-t">
-                  <td className="px-4 py-2">{order.id}</td>
-                  <td className="px-4 py-2">{order.date}</td>
-                  <td className="px-4 py-2">{order.total}</td>
-                  <td className="px-4 py-2">{order.status}</td>
-                  <td className="px-4 py-2 text-center">
-                    <FontAwesomeIcon
-                      icon={faTrash}
-                      size="md"
-                      className="hover:cursor-pointer hover:text-gray-600"
-                      onClick={() => handleDeleteHis(index)}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                {
+                 profiledata?.cart?.length > 0 ? <table className="w-full table-auto bg-gray-50 rounded-lg">
+                 <thead className="bg-gray-200">
+                   <tr>
+                     <th className="px-4 py-2 text-left">Order ID</th>
+                     <th className="px-4 py-2 text-left">Date</th>
+                     <th className="px-4 py-2 text-left">Total</th>
+                     <th className="px-4 py-2 text-left">Status</th>
+                     <th className="px-4 py-2 text-left text-center">Action</th>
+                   </tr>
+                 </thead>
+                 <tbody>
+                   {user.orderHistory?.map((order, index) => (
+                     <tr key={order.id} className="border-t">
+                       <td className="px-4 py-2">{order.id}</td>
+                       <td className="px-4 py-2">{order.date}</td>
+                       <td className="px-4 py-2">{order.total}</td>
+                       <td className="px-4 py-2">{order.status}</td>
+                       <td className="px-4 py-2 text-center">
+                         <FontAwesomeIcon
+                           icon={faTrash}
+                           size="md"
+                           className="hover:cursor-pointer hover:text-gray-600"
+                           onClick={() => handleDeleteHis(index)}
+                         />
+                       </td>
+                     </tr>
+                   ))}
+                 </tbody>
+               </table>:  <div className="flex justify-center items-center border-2 h-[10vh] bg-[#F4EFC6] rounded">
+               <h3>No order history 😒</h3>
+               </div>
+                }
         </div>
       </div>
     </div>
