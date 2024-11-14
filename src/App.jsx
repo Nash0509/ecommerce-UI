@@ -1,4 +1,5 @@
 import React from "react";
+import { useEffect, useState } from "react";
 import Contact from "./Components/Contact";
 import "./index.css";
 import { ToastContainer } from "react-toastify";
@@ -22,6 +23,19 @@ import NotFound from "./Components/NotFound";
 import FotgotPass from "./Components/FotgotPass";
 import BestDeals from "./Components/BestDeals";
 
+const ProtectedRoute = ({ children }) => {
+  const [token, setToken] = useState(sessionStorage.getItem("token"));
+
+  useEffect(() => {
+    const storedToken = sessionStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken);
+    }
+  }, []);
+
+  return token ? children : <Navigate to="/" />;
+};
+
 const App = () => {
   return (
     <Router>
@@ -37,18 +51,16 @@ const App = () => {
         <Route
           path="/profile"
           element={
-            sessionStorage.getItem("token") ? (
+            <ProtectedRoute>
               <Profile />
-            ) : (
-              <Navigate to="/" />
-            )
+            </ProtectedRoute>
           }
         />
         <Route path="/login" element={<Login />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/forgotPassword" element={<FotgotPass />} />
         <Route path="*" element={<NotFound />} />
-        <Route path="/bestdeals" element={<BestDeals />}/>
+        <Route path="/bestdeals" element={<BestDeals />} />
       </Routes>
       <Footer />
     </Router>

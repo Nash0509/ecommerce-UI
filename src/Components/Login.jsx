@@ -1,11 +1,13 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { freshData } from "./PizzaSlice";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch(); 
 
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState();
@@ -30,12 +32,24 @@ const Login = () => {
 
         if (log.ok) {
           const res = await log.json();
-          localStorage.setItem('token', res.token);
+          localStorage.setItem("token", res.token);
           setToken(res.token);
-          console.log(res);
-          localStorage.setItem('uid', res.result._id);
+          localStorage.setItem("uid", res.result._id);
           sessionStorage.setItem("token", res.token);
           toast.success("Logged in successfully!");
+          if (localStorage.getItem("token")) {
+            function cart() {
+              fetch(
+                `http://localhost:8000/cart/${localStorage.getItem("uid")}`
+              )
+                .then((res) => res.json())
+                .then((res) => {
+                  dispatch(freshData({ count: res.length }));
+                })
+                .catch((err) => console.log(err.message));
+            }
+            cart();
+          }
           navigate("/cart/1");
         } else if (log.status === 422) {
           const data = await log.json();
@@ -48,9 +62,8 @@ const Login = () => {
         toast.error("An error occured while logging in : " + err.message);
       }
     } else {
-        toast.error("You are not logged in, please login...");
+      toast.error("You are not logged in, please login...");
     }
-    
   }
 
   return (
@@ -112,7 +125,12 @@ const Login = () => {
           >
             Forgot your password?
           </a>
-           <p className="text-sm text-blue-600 hover:underline cursor-pointer" onClick={() => navigate('/contact')}>Register</p>
+          <p
+            className="text-sm text-blue-600 hover:underline cursor-pointer"
+            onClick={() => navigate("/contact")}
+          >
+            Register
+          </p>
         </div>
       </form>
     </div>

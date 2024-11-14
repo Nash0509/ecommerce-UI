@@ -40,16 +40,17 @@ const Navbar = () => {
   ];
 
   useEffect(() => {
-    function cart() {
-      fetch("https://ecommerce-l97b.onrender.com/cart")
-        .then((res) => res.json())
-        .then((res) => {
-          console.log("Cart items : ", res);
-          dispatch(freshData({ count: res.length }));
-        })
-        .catch((err) => console.log(err.message));
+    if (sessionStorage.getItem("token")) {
+      function cart() {
+        fetch(`http://localhost:8000/cart/${localStorage.getItem('uid')}`)
+          .then((res) => res.json())
+          .then((res) => {
+            dispatch(freshData({ count: res.length }));
+          })
+          .catch((err) => console.log(err.message));
+      }
+      cart();
     }
-    cart();
   }, []);
 
   const count = useSelector((store) => store.pizza.count);

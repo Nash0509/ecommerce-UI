@@ -29,6 +29,7 @@ const style = {
 const Cart = () => {
   const [items, setItems] = useState([]);
   const [load, setLoad] = useState(true);
+  const [isLoggedIn, setisLoggedIn] = useState(false);
   const dispatch = useDispatch();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -40,6 +41,11 @@ const Cart = () => {
   const total1 = useSelector((store) => store.pizza.total);
 
   useEffect(() => {
+    if (sessionStorage.getItem("token")) {
+      setisLoggedIn(true);
+    } else {
+      setisLoggedIn(false);
+    }
     setTimeout(() => {
       setLoad(false);
     }, 500);
@@ -47,9 +53,13 @@ const Cart = () => {
 
   useEffect(() => {
     try {
-      fetch("https://ecommerce-l97b.onrender.com/cart")
+      fetch(`http://localhost:8000/cart/${localStorage.getItem('uid')}`)
         .then((res) => res.json())
         .then((res) => {
+          console.log(
+            "This is the variety of the Thing that I want to achieve..."
+          );
+          console.log(res);
           setItems(res);
           const totalPrice = res.reduce((acc, cur) => {
             if (cur.hasOwnProperty("price") && typeof cur.price === "number") {
@@ -62,9 +72,9 @@ const Cart = () => {
         })
         .catch(() => console.log("Error in fetching cart items!"));
     } catch (err) {
-      console.log("Error in the cart!");
+      toast.error("There was an error please try again...");
     }
-  }, [items]);
+  }, []);
 
   if (load) {
     return (
@@ -79,7 +89,7 @@ const Cart = () => {
 
   async function handleDelete(id) {
     try {
-      await fetch(`https://ecommerce-l97b.onrender.com/delete/${id}`, {
+      await fetch(`http://localhost:8000/deleteItem/${id}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
       })
@@ -92,10 +102,11 @@ const Cart = () => {
         });
     } catch (err) {
       toast.error("Its not you its us 😣, please try again...");
+      alert(err);
     }
   }
 
-  return (
+  return isLoggedIn ? (
     <div className="bg-[whitesmoke]">
       <div className="flex justify-center pt-5">
         <p className="text-center bg-[blue] text-white w-[30vw] rounded p-2">
@@ -177,6 +188,24 @@ const Cart = () => {
         )}
       </div>
     </div>
+  ) : (
+    <div class="flex justify-center items-center h-[90vh] bg-red-50 p-5 border-2 flex-col">
+      <h1 class="text-red-500 font-bold text-2xl rounded-lg bg-red-50 text-center">
+        You need to log in to view the cart...
+      </h1>
+      <Button
+        variant="contained"
+        sx={{
+          backgroundColor: "blue",
+          color: "white",
+          "&:hover": { backgroundColor: "darkblue" },
+          marginTop: "1rem",
+        }}
+        onClick={() => navigate("/login")}
+      >
+        LogIn
+      </Button>
+    </div>
   );
 };
 
@@ -190,7 +219,7 @@ const CartItem = ({ pdt }) => {
       .then((res) => {
         setProduct(res);
       })
-      .catch(() => console.log("Error in fetching product details!"));
+      .catch(() => toast.error("Error in fetching product details!"));
   }, [pdt.id]);
 
   if (!product) {

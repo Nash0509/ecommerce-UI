@@ -4,15 +4,16 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { makeItZero } from "./PizzaSlice";
 import GhostLoader from "./GhostLoader";
 
 const Profile = () => {
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const [profiledata, setProfileData] = useState({});
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     try {
       fetch(`http://localhost:8000/profile/${localStorage.getItem("uid")}`)
@@ -20,8 +21,6 @@ const Profile = () => {
         .then((res) => {
           if (res.success) {
             setProfileData(res.result[0]);
-            console.log("Yahi pr wala data aa raha hai mere dost...");
-            console.log(res.result[0]);
             const profile = res.result[0];
             setUser({
               name: profile.userName,
@@ -75,6 +74,7 @@ const Profile = () => {
         localStorage.removeItem("uid");
         localStorage.removeItem("token");
         sessionStorage.removeItem("token");
+        dispatch(makeItZero());
         navigate("/login");
         Swal.fire("Logged out successfully!", "", "success");
       }
