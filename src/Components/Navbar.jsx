@@ -135,11 +135,13 @@ const Navbar = () => {
               </Link>
             </li>
           )}
-          <li>
-            <Link to="/admin" className="hover:text-yellow-400 transition">
-              Admin
-            </Link>
-          </li>
+         {
+          localStorage.getItem('isAdmin') && <li>
+          <Link to="/admin" className="hover:text-yellow-400 transition">
+            Admin
+          </Link>
+        </li>
+         }
         </ul>
       </div>
     </div>

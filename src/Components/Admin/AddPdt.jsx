@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   TextField,
   Button,
   Typography,
   Card,
   CardContent,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -19,6 +23,21 @@ const AddPdt = () => {
     image: "",
     type: "",
   });
+  const [types, setTypes] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:8000/categories")
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.success) {
+          toast.success("Got the category");
+          setTypes(res.cate);
+        } else {
+          toast.error("Failed to get category");
+        }
+      })
+      .catch((err) => toast.error("Failed to get category"));
+  }, []);
 
   const handleChange = (e) => {
     setProductData({ ...productData, [e.target.name]: e.target.value });
@@ -126,18 +145,21 @@ const AddPdt = () => {
             />
 
             {/* Type */}
-            <TextField
-              label="Type"
-              name="type"
-              variant="outlined"
-              fullWidth
-              value={productData.type}
-              onChange={handleChange}
-              required
-              InputLabelProps={{
-                style: { fontSize: "1rem", color: "#616161" },
-              }}
-            />
+            <FormControl fullWidth variant="outlined" required>
+              <InputLabel>Type</InputLabel>
+              <Select
+                name="type"
+                value={productData.type}
+                onChange={handleChange}
+                label="Type"
+              >
+                {types.map((type, index) => (
+                  <MenuItem key={index} value={type}>
+                    {type}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
             {/* Submit Button */}
             <Button

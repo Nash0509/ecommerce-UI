@@ -74,6 +74,7 @@ const Profile = () => {
         localStorage.removeItem("uid");
         localStorage.removeItem("token");
         sessionStorage.removeItem("token");
+        localStorage.removeItem('isAdmin');
         dispatch(makeItZero());
         navigate("/login");
         Swal.fire("Logged out successfully!", "", "success");

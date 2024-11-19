@@ -1,11 +1,9 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { Button } from '@mui/material';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { useNavigate } from 'react-router-dom';
-import { HashLoader } from 'react-spinners';
-import { FaRupeeSign } from 'react-icons/fa';
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Button } from "@mui/material";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { HashLoader } from "react-spinners";
+import { FaRupeeSign } from "react-icons/fa";
 
 const Cate = () => {
   const [res, setRes] = useState([]);
@@ -13,68 +11,87 @@ const Cate = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  window.scrollTo(0,0);
-
   useEffect(() => {
-      
-    setTimeout(() => {
-      setLoad(false);
-    }, 500)
-
-  }, [])
-
-  useEffect(() => {
+    window.scrollTo(0, 0);
     setLoad(true);
-    setTimeout(() => {
-       fetch(`https://ecommerce-l97b.onrender.com/${id.toLowerCase()}`)
-       .then((res) => res.json())
-       .then((data) => {
-         console.log(data);
-         setRes(data);
-       });
-       setLoad(false);
-    }, 200)
-   
+
+    const timeoutId = setTimeout(() => {
+      fetch(`https://ecommerce-l97b.onrender.com/${id.toLowerCase()}`)
+        .then((response) => response.json())
+        .then((data) => {
+          setRes(data);
+          setLoad(false);
+        })
+        .catch(() => setLoad(false));
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
   }, [id]);
 
-  if(load) {
-    return <div className='h-[70vh] flex justify-center' style={{alignItems:'center'}}><HashLoader size={100}/></div>
+  if (load) {
+    return (
+      <div className="h-[70vh] flex justify-center items-center">
+        <HashLoader size={100} color="#4A90E2" />
+      </div>
+    );
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-100 py-8">
+      {res.length === 0 ? (
+        <div className="h-[90vh] flex justify-center items-center text-2xl font-bold text-gray-600">
+          Currently no items to show in {id}...
+        </div>
+      ) : (
+        <div className="max-w-6xl mx-auto">
+          {/* Category Title */}
+          <h1 className="text-center text-3xl font-bold bg-black text-white py-3 rounded shadow-lg mb-8">
+            {id}
+          </h1>
 
-      <div>
-        {res.length === 0 ? (
-          <div className='h-[90vh] bg-[whitesmoke] flex justify-center pt-[35vh] text-[2rem] font-bold'>Currently no items to show in {id}...</div>
-        ) : (
-          <div className="item justify-center m-5 p-5 " style={{ alignItems: 'center', border: '1px solid black' }}>
-              <h1 className='text-center text-[1.5rem] bg-black text-white rounded shadow-xl'>{id}</h1>
+          {/* Product Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {res.map((pdt, index) => (
-                 <div className='flex mt-5 hover:bg-[azure] p-5 hover:cursor-pointer' style={{alignItems:'center', justifyContent:'center'}} onClick={() => navigate(`/product/${pdt._id}`)}>
-                   <React.Fragment key={index}>
-                <div className="image shadow-2xl">
-                  <img src={pdt.image} alt={`${id}-image`} className=' w-[20vw] h-[20vw] mx-5 mb-5 p-5' />
-                </div>
-                <div className="des bg-aqua ml-8">
-                  <div className='w-[50vw]'>
-                    <p className='text-[1.5rem] text-left'>{pdt.name}</p>
-                  </div>
-                  <p className='text-[22px] my-4 flex' style={{alignItems:'center'}}>
-                    Price:&nbsp;<FaRupeeSign/>&nbsp; {pdt.Price}
+              <div
+                key={index}
+                className="bg-white rounded shadow-md hover:shadow-lg transition-shadow p-4 flex flex-col items-center"
+                onClick={() => navigate(`/product/${pdt._id}`)}
+              >
+                {/* Product Image */}
+                <img
+                  src={pdt.image}
+                  alt={`${id}-product`}
+                  className="w-48 h-48 object-cover mb-4"
+                />
+
+                {/* Product Details */}
+                <div className="text-center">
+                  <p className="text-lg font-semibold text-gray-800">
+                    {pdt.name}
                   </p>
-                  <div className='my-5 w-[50vw]'>
-                    <Button variant='contained' color='primary'>Add to Cart&nbsp;<ShoppingCartIcon /></Button>
-                  </div>
+                  <p className="text-lg text-gray-600 flex items-center justify-center mt-2">
+                    Price:&nbsp;
+                    <FaRupeeSign />
+                    &nbsp;{pdt.Price}
+                  </p>
                 </div>
-              </React.Fragment>
-                 </div>
+
+                {/* Add to Cart Button */}
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className="mt-4 flex items-center"
+                >
+                  Add to Cart&nbsp;
+                  <ShoppingCartIcon />
+                </Button>
+              </div>
             ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
-}
+};
 
 export default Cate;

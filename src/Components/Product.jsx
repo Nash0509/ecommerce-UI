@@ -1,367 +1,289 @@
-import React from "react";
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import Rating from "@mui/material/Rating";
-import Stack from "@mui/material/Stack";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addToCart } from "./PizzaSlice";
+import { toast } from "react-toastify";
+import Slider from "react-slick";
+import Rating from "@mui/material/Rating";
+import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
 import { AiOutlineShoppingCart } from "react-icons/ai";
-import { toast } from "react-toastify";
-import { FaCheck, FaRupeeSign, FaStar } from "react-icons/fa";
+import { FaCheck, FaRupeeSign, FaTrash, FaEdit } from "react-icons/fa";
 import { HashLoader } from "react-spinners";
-import StarIcon from "@mui/icons-material/Star";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import { CardActionArea } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
-const style = {
+const modalStyle = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "black",
-  border: "2px solid #000",
+  width: "90%",
+  maxWidth: 400,
+  bgcolor: "#1f2937",
+  border: "2px solid #374151",
   boxShadow: 24,
-  borderRadius: "5px",
+  borderRadius: "12px",
   p: 4,
 };
 
-const labels = {
-  0.5: "Useless",
-  1: "Useless+",
-  1.5: "Poor",
-  2: "Poor+",
-  2.5: "Ok",
-  3: "Ok+",
-  3.5: "Good",
-  4: "Good+",
-  4.5: "Excellent",
-  5: "Excellent+",
-};
-
-function getLabelText(value) {
-  return `${value} Star${value !== 1 ? "s" : ""}, ${labels[value]}`;
-}
-
 const Product = () => {
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const [value, setValue] = React.useState(2);
-  const [hover, setHover] = React.useState(-1);
-  const [reviews, setReviews] = useState("");
-  const [rate, setRate] = useState(3);
-  const [totalR, setTotalR] = useState(0);
-  const [cards, setCards] = useState([
-    "That was really nice!",
-    "I have used this and I am not satisfied...",
-    "I mean it's alright",
-  ]);
-
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [p, setP] = useState();
-  const [load, setLoad] = useState(true);
+  const [product, setProduct] = useState(null);
+  const [reviews, setReviews] = useState([]);
+  const [rating, setRating] = useState(3);
+  const [reviewInput, setReviewInput] = useState("");
+  const [totalRatings, setTotalRatings] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
+  const isAdmin = localStorage.getItem("isAdmin") === "true";
 
   useEffect(() => {
-    setTimeout(() => {
-      setLoad(false);
-    }, 500);
-  }, []);
+    const fetchProductData = async () => {
+      try {
+        const productRes = await fetch(`http://localhost:8000/product/${id}`);
+        const productData = await productRes.json();
+        setProduct(productData);
 
-  useEffect(() => {
-    fetch(`https://ecommerce-l97b.onrender.com/reviews/${id}`)
-      .then((res) => res.json())
-      .then((res) => {
-        console.log("This is the review data : ", res[0]);
-        console.log(res.length);
-        let a = 0;
-        res.map((r) => {
-          a += r.rating;
-          setCards([...cards, r.review]);
-        });
-        if (res.length !== 0) {
-          setRate(a / res.length);
+        const reviewRes = await fetch(
+          `https://ecommerce-l97b.onrender.com/reviews/${id}`
+        );
+        const reviewData = await reviewRes.json();
+        const averageRating =
+          reviewData.reduce((acc, review) => acc + review.rating, 0) /
+          reviewData.length;
+
+        setReviews(reviewData.map((review) => review.review));
+        setRating(averageRating || 3);
+        setTotalRatings(reviewData.length);
+
+        setLoading(false);
+      } catch (err) {
+        toast.error("Failed to fetch product data.");
+      }
+    };
+
+    fetchProductData();
+  }, [id]);
+
+  const handleAddToCart = async () => {
+    if (!localStorage.getItem("token")) {
+      navigate("/login");
+      toast.info("Please log in to add items to your cart.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:8000/pdt/${id}/${product.Price}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            price: product.Price,
+            uid: localStorage.getItem("uid"),
+          }),
         }
-        setTotalR(res.length + 3);
-      });
-  }, []);
+      );
 
-  useEffect(() => {
-    fetch(`http://localhost:8000/trendSetter/${id}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      const result = await response.json();
+      if (result.success) {
+        dispatch(addToCart({ price: product.Price }));
+        toast.success("Item added to cart!");
+      }
+    } catch (error) {
+      toast.error("Failed to add item to cart.");
+    }
+    setModalOpen(false);
+  };
+
+  const handleReviewSubmit = async () => {
+    try {
+      await fetch(`https://ecommerce-l97b.onrender.com/review/${id}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ review: reviewInput, rating }),
+      });
+      toast.success("Thank you for your feedback!");
+    } catch {
+      toast.error("Failed to submit your review.");
+    }
+  };
+
+  const handleDelete = () => {
+    fetch(`http://localhost:8000/deletePdt/${id}`, {
+      method: "DELETE",
     })
       .then((res) => res.json())
       .then((res) => {
         if (res.success) {
-          console.log(res);
+          toast.success("Deleted successfully");
+          navigate("/");
         }
       })
-      .catch((err) =>
-        toast.error("There was an error while increasing the count...")
-      );
-    fetch(`http://localhost:8000/product/${id}`)
-      .then((res) => res.json())
-      .then((res) => {
-        console.log(res);
-        setP(res);
-        window.scrollTo(0, 0);
+      .catch(() => {
+        toast.error("Error while deleting");
       });
-  }, []);
 
-  if (load) {
+    setDeleteModalOpen(false);
+  };
+
+  const handleEdit = () => {
+    navigate(`/edit-product/${id}`);
+  };
+
+  if (loading) {
     return (
-      <div
-        className="h-[70vh] flex justify-center"
-        style={{ alignItems: "center" }}
-      >
+      <div className="flex justify-center items-center h-[70vh]">
         <HashLoader size={100} />
       </div>
     );
   }
 
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-  };
-
-  if (!p) {
-    return <p>Loading...</p>;
-  }
-
-  async function handleAddToCart() {
-    alert("Comign here!");
-    try {
-      fetch(`http://localhost:8000/pdt/${id}/${p.Price}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          price: p.Price,
-          uid: localStorage.getItem("uid"),
-        }),
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          console.log(res);
-          toast.success("Item added to the cart successfully");
-          setOpen(false);
-        });
-    } catch (err) {
-      console.log("An error occured while adding to the cart!");
-    }
-  }
-
-  function handleReview() {
-    console.log("rating : " + value);
-    console.log("Review : " + reviews);
-
-    fetch(`https://ecommerce-l97b.onrender.com/review/${id}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        review: reviews,
-        rating: value,
-      }),
-    });
-
-    toast.success("Thanks for your valuable feedback!");
-    window.scrollTo(0, 0);
-  }
-
   return (
-    <div>
-      <div className="item flex justify-center mt-6">
-        <div className="image">
-          <img
-            src={p.image}
-            alt={`${id}-image`}
-            className="w-[30vw] h-[30vw] mx-5 mb-5 shadow-2xl"
-          />
-        </div>
-
-        <div className="des bg-aqua">
-          <div className="w-[50vw]">
-            <p className="text-[2rem] text-left">{p.name}</p>
-            <p className="text-[1.5rem] text-left">{p.dis}</p>
-          </div>
-          <p className="text-[22px] my-4 flex" style={{ alignItems: "center" }}>
-            Price : &nbsp;
+    <div className="p-6 max-w-5xl mx-auto relative">
+      {/* Product Section */}
+      <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
+        <img
+          src={product.image}
+          alt={product.name}
+          className="w-full md:w-[40%] rounded-lg shadow-md"
+        />
+        <div className="flex flex-col gap-6">
+          <h1 className="text-3xl font-bold text-gray-800">{product.name}</h1>
+          <p className="text-gray-600">{product.dis}</p>
+          <div className="flex items-center text-2xl font-semibold text-blue-600">
             <FaRupeeSign />
-            &nbsp; {p.Price}
-          </p>
-
-          <div className="rating">
-            <h1>Ratings : {rate}</h1>
-            <p className="underline mt-1">{totalR} ratings</p>
-            <Stack spacing={1} className="my-3 mb-10">
-              <Rating
-                name="half-rating-read"
-                defaultValue={rate}
-                precision={0.5}
-                readOnly
-              />
-            </Stack>
+            <span>{product.Price}</span>
           </div>
-
-          <div className="my-5 w-[50vw]">
-            <div>
-              <button
-                onClick={handleOpen}
-                className="bg-[blue] text-white rounded p-2 flex"
-                style={{ alignItems: "center" }}
-              >
-                Add to the Cart &nbsp; <AiOutlineShoppingCart size={30} />
-              </button>
-              <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-              >
-                <Box sx={style}>
-                  <Typography
-                    id="modal-modal-title"
-                    variant="h6"
-                    component="h2"
-                    className="text-white text-center"
-                  >
-                    Are you sure ?
-                  </Typography>
-                  <Typography
-                    id="modal-modal-description"
-                    sx={{ mt: 2 }}
-                    className="text-center"
-                  >
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => {
-                        if (localStorage.getItem("token")) {
-                          dispatch(addToCart({ price: p.Price }));
-                          handleAddToCart();
-                        } else {
-                          navigate("/login");
-                          localStorage.setItem("idForCart", id);
-                          toast.info("You will have to login first...");
-                        }
-                      }}
-                    >
-                      Add to Cart&nbsp;
-                      <ShoppingCartIcon />
-                    </Button>
-                  </Typography>
-                </Box>
-              </Modal>
-              <h1
-                className="flex mt-5 text-[1.5rem]"
-                style={{ alignItems: "center" }}
-              >
-                <FaCheck />
-                &nbsp;Ecommerce assured
-              </h1>
-            </div>
+          <div>
+            <Rating value={rating} readOnly />
+            <p className="text-sm text-gray-500">{totalRatings} ratings</p>
           </div>
+          <button
+            onClick={() => setModalOpen(true)}
+            className="flex items-center gap-3 bg-blue-600 text-white py-3 px-6 rounded-lg shadow-md hover:bg-blue-700 transition"
+          >
+            Add to Cart <AiOutlineShoppingCart size={20} />
+          </button>
         </div>
       </div>
 
-      <div className="mt-10 text-center text-[1.5rem]">
-        <h1>
-          Already an owner of this product ? Leave your valueable feedback here
-        </h1>
-        <p className="mt-5 flex justify-center">
-          {" "}
-          <Box
-            sx={{
-              width: 200,
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <Rating
-              name="hover-feedback"
-              value={value}
-              precision={0.5}
-              getLabelText={getLabelText}
-              onChange={(event, newValue) => {
-                setValue(newValue);
-              }}
-              onChangeActive={(event, newHover) => {
-                setHover(newHover);
-              }}
-              emptyIcon={
-                <StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />
-              }
-            />
-            {value !== null && (
-              <Box sx={{ ml: 2 }}>{labels[hover !== -1 ? hover : value]}</Box>
-            )}
-          </Box>{" "}
-        </p>
-        <br />
-        <textarea
-          cols="30"
-          rows="10"
-          className="border-2 hover:border-[blue] focus:border-[black] p-3"
-          placeholder="Express without any hasitation..."
-          onChange={(e) => setReviews(e.target.value)}
-        ></textarea>
-        <br />
-        <button
-          className="bg-[blue] text-white rounded p-2 hover:bg-blue-700"
-          onClick={handleReview}
+      {/* Reviews Section */}
+      <div className="mt-12">
+        <h2 className="text-xl font-bold mb-6 text-gray-800">
+          Customer Reviews
+        </h2>
+        <Slider
+          dots={true}
+          infinite={true}
+          speed={500}
+          slidesToShow={2}
+          slidesToScroll={1}
         >
-          Submit
-        </button>
-      </div>
-
-      <div className="reviews bg-black text-white my-10 p-[4rem]">
-        <h1
-          className="p-6 flex justify-center text-[1.5rem]"
-          style={{ alignItems: "center" }}
-        >
-          Customer Reviews&nbsp; <FaStar color="gold" />
-        </h1>
-        <Slider {...settings} className="slide p-10 text-center">
-          {cards.map((card) => {
-            return (
-              <Card sx={{ maxWidth: 345 }}>
-                <CardActionArea>
-                  <CardContent>
-                    <Typography gutterBottom variant="h5" component="div">
-                      {card}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Anonymous
-                    </Typography>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            );
-          })}
+          {reviews.map((review, index) => (
+            <div
+              key={index}
+              className="p-6 bg-gray-50 rounded-lg shadow-md text-gray-700 text-center"
+            >
+              <p>{review}</p>
+            </div>
+          ))}
         </Slider>
       </div>
+
+      {/* Review Form */}
+      <div className="mt-12">
+        <h2 className="text-xl font-bold mb-4 text-gray-800">
+          Leave Your Feedback
+        </h2>
+        <div className="flex flex-col gap-4 items-center">
+          <Rating
+            value={rating}
+            onChange={(e, newValue) => setRating(newValue)}
+          />
+          <textarea
+            className="w-full md:w-1/2 p-4 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+            rows="4"
+            placeholder="Write your review..."
+            onChange={(e) => setReviewInput(e.target.value)}
+          ></textarea>
+          <button
+            onClick={handleReviewSubmit}
+            className="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition"
+          >
+            Submit Review
+          </button>
+        </div>
+      </div>
+
+      {/* Modal */}
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+        <Box sx={modalStyle}>
+          <Typography variant="h6" className="text-white text-center">
+            Confirm Add to Cart
+          </Typography>
+          <div className="flex justify-around mt-6">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleAddToCart}
+            >
+              Confirm
+            </Button>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={() => setModalOpen(false)}
+            >
+              Cancel
+            </Button>
+          </div>
+        </Box>
+      </Modal>
+
+      {/* Admin Icons */}
+      {isAdmin && (
+        <div className="flex flex-col gap-4 absolute top-6 right-8">
+          <FaTrash
+            className="text-red-600 cursor-pointer"
+            size={24}
+            onClick={() => setDeleteModalOpen(true)}
+          />
+          <FaEdit
+            className="text-blue-600 cursor-pointer"
+            size={24}
+            onClick={handleEdit}
+          />
+        </div>
+      )}
+
+      <Modal open={deleteModalOpen} onClose={() => setDeleteModalOpen(false)}>
+        <Box sx={modalStyle}>
+          <Typography variant="h6" className="text-white text-center">
+            Are you sure you want to delete this product?
+          </Typography>
+          <div className="flex justify-around mt-6">
+            <Button variant="contained" color="error" onClick={handleDelete}>
+              Delete
+            </Button>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={() => setDeleteModalOpen(false)}
+            >
+              Cancel
+            </Button>
+          </div>
+        </Box>
+      </Modal>
     </div>
   );
 };

@@ -7,6 +7,7 @@ import {
   CardContent,
   Box,
 } from "@mui/material";
+import { toast } from "react-toastify";
 
 const AddCategory = () => {
   const [categoryName, setCategoryName] = useState("");
@@ -20,15 +21,26 @@ const AddCategory = () => {
     }
     // Handle form submission logic here
     console.log({ categoryName, description });
-    alert("Category added successfully!");
+    fetch("http://localhost:8000/addType", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ categoryName, description }),
+    })
+    .then(res => res.json())
+    .then(res => {
+      if(res.success) {
+        toast.success("Added category");
+      }
+    })
+    .catch(err => toast.error("Error adding category"))
     setCategoryName("");
     setDescription("");
   };
 
   return (
-    <Box
-      className="min-h-[90vh] flex items-center justify-center bg-gray-100 py-12"
-    >
+    <Box className="min-h-[90vh] flex items-center justify-center bg-gray-100 py-12">
       <Card className="w-full max-w-md shadow-lg">
         <CardContent>
           <Typography
@@ -37,7 +49,10 @@ const AddCategory = () => {
           >
             Add New Category
           </Typography>
-          <form onSubmit={handleSubmit} className="flex items-center justify-center gap-2 flex-col	">
+          <form
+            onSubmit={handleSubmit}
+            className="flex items-center justify-center gap-2 flex-col	"
+          >
             <TextField
               label="Category Name"
               variant="outlined"
