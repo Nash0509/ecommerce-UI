@@ -7,14 +7,13 @@ import { toast } from "react-toastify";
 
 const Login = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch(); 
+  const dispatch = useDispatch();
 
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState();
   const [token, setToken] = useState("");
 
   async function handleLogin(e) {
-    alert("Insode of the handle Login!");
     e.preventDefault();
 
     if (!sessionStorage.getItem("token")) {
@@ -39,9 +38,7 @@ const Login = () => {
           toast.success("Logged in successfully!");
           if (localStorage.getItem("token")) {
             function cart() {
-              fetch(
-                `http://localhost:8000/cart/${localStorage.getItem("uid")}`
-              )
+              fetch(`http://localhost:8000/cart/${localStorage.getItem("uid")}`)
                 .then((res) => res.json())
                 .then((res) => {
                   dispatch(freshData({ count: res.length }));
@@ -50,7 +47,10 @@ const Login = () => {
             }
             cart();
           }
-          navigate("/cart/1");
+          if (localStorage.getItem("idForCart")) {
+            navigate(`/product/${localStorage.getItem("idForCart")}`);
+            localStorage.removeItem("idForCart");
+          } else navigate("/");
         } else if (log.status === 422) {
           const data = await log.json();
           console.log(data.message);

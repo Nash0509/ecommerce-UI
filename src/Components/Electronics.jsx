@@ -10,9 +10,10 @@ const Electronics = () => {
   const [images, setImages] = useState([]);
 
   useEffect(() => {
-    fetch("https://ecommerce-l97b.onrender.com/electronics")
+    fetch("http://localhost:8000/electronics")
       .then((res) => res.json())
       .then((res) => {
+        console.log("_____________________");
         console.log(res);
         setImages(res);
       });
@@ -22,32 +23,60 @@ const Electronics = () => {
     dots: true,
     infinite: true,
     speed: 500,
-    slidesToShow: 4,
+    slidesToShow: 3,
     slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    nextArrow: (
+      <div className="slick-arrow slick-next text-white bg-black p-2 rounded-full shadow-lg hover:bg-gray-800">
+        <i className="fas fa-chevron-right"></i>
+      </div>
+    ),
+    prevArrow: (
+      <div className="slick-arrow slick-prev text-white bg-black p-2 rounded-full shadow-lg hover:bg-gray-800">
+        <i className="fas fa-chevron-left"></i>
+      </div>
+    ),
   };
 
   return (
-    <div className="my-20 bg-black text-white p-10">
-      <p className="text-center my-10 text-[30px]">Electronics</p>
+    <div className="bg-gradient-to-b from-gray-800 to-black text-white py-16 px-8">
+      <h2 className="text-center text-4xl font-bold text-white mb-12 tracking-wide">
+        Explore the Latest in Electronics
+      </h2>
+
       {images.length === 0 ? (
-        <div className="flex space-x-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {Array.from({ length: 8 }).map((_, index) => (
-            <div key={index} className="w-64 h-[250px] bg-gray-700 animate-pulse rounded-md"></div>
+            <div
+              key={index}
+              className="w-full bg-gray-700 h-80 rounded-lg animate-pulse"
+            ></div>
           ))}
         </div>
       ) : (
-        <Slider {...settings} className="slide">
+        <Slider {...settings} className="product-slider">
           {images.map((image, index) => (
             <div
               key={image._id}
-              className="w-64 cursor-pointer"
+              className="group relative w-full cursor-pointer rounded-lg overflow-hidden shadow-lg hover:shadow-xl transform transition duration-300 ease-in-out hover:scale-105"
               onClick={() => navigate(`/product/${image._id}`)}
             >
               <img
                 src={image.image}
                 alt={`electronics-${index}`}
-                className="w-full hover:rounded-2xl"
+                className="w-full h-64 object-cover group-hover:opacity-75 transition-opacity duration-300"
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-black opacity-40 group-hover:opacity-50 transition-opacity duration-300"></div>
+              <div className="absolute bottom-4 left-4 right-4 p-4">
+                <p className="text-xl font-semibold tracking-wide group-hover:text-yellow-400 transition-colors duration-300">
+                  {image.name}
+                </p>
+                <p className="text-lg mt-2">${image.Price}</p>
+                <button className="mt-4 bg-yellow-500 text-black py-2 px-4 rounded-lg shadow-md hover:bg-yellow-400 transform transition duration-200">
+                  View Product
+                </button>
+              </div>
             </div>
           ))}
         </Slider>

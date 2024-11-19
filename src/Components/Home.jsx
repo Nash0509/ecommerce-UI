@@ -140,16 +140,16 @@ const Home = () => {
         </div>
       </div>
 
-      <div className="p-10">
-        <h1 className="text-3xl text-center shadow-md p-3 rounded border">
-          Top stories
+      <div className="p-10 bg-gradient-to-b from-gray-800 to-black text-white">
+        <h1 className="text-3xl text-center font-bold text-yellow-400 shadow-lg p-4 rounded-lg border border-yellow-500 mb-8">
+          Top Stories
         </h1>
 
-        <p className="p-10  mt-5 rounded hover:bg-[azure] hover:text-black shadow-lg text-[1.3rem] border">
+        <p className="text-[1.2rem] leading-relaxed text-gray-200 p-8 mt-5 rounded-lg shadow-lg hover:bg-amber-200 hover:text-black border border-gray-600 transition-all duration-300">
           Once upon a time in the bustling world of online shopping, there was a
           curious customer named Alex. Eager to find the perfect birthday gift
           for a friend, Alex decided to explore a popular e-commerce website
-          known for its vast array of products and seamless user experience.{" "}
+          known for its vast array of products and seamless user experience.
           <br />
           <br />
           As Alex navigated through the virtual aisles, the website's
@@ -168,7 +168,7 @@ const Home = () => {
           As Alex filled the digital shopping cart with carefully chosen items,
           they noticed a notification icon displaying a special discount for
           being a loyal customer. Excitement filled the virtual air as Alex
-          proceeded to checkout, anticipating the upcoming birthday surprise.{" "}
+          proceeded to checkout, anticipating the upcoming birthday surprise.
           <br />
           <br />
           The checkout process was swift and secure, and Alex appreciated the

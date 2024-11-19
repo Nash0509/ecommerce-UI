@@ -100,7 +100,22 @@ const Product = () => {
   }, []);
 
   useEffect(() => {
-    fetch(`https://ecommerce-l97b.onrender.com/product/${id}`)
+    fetch(`http://localhost:8000/trendSetter/${id}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.success) {
+          console.log(res);
+        }
+      })
+      .catch((err) =>
+        toast.error("There was an error while increasing the count...")
+      );
+    fetch(`http://localhost:8000/product/${id}`)
       .then((res) => res.json())
       .then((res) => {
         console.log(res);
@@ -243,8 +258,14 @@ const Product = () => {
                       variant="contained"
                       color="primary"
                       onClick={() => {
-                        dispatch(addToCart({ price: p.Price }));
-                        handleAddToCart();
+                        if (localStorage.getItem("token")) {
+                          dispatch(addToCart({ price: p.Price }));
+                          handleAddToCart();
+                        } else {
+                          navigate("/login");
+                          localStorage.setItem("idForCart", id);
+                          toast.info("You will have to login first...");
+                        }
                       }}
                     >
                       Add to Cart&nbsp;

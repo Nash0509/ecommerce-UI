@@ -22,6 +22,12 @@ import Profile from "./Components/Profile";
 import NotFound from "./Components/NotFound";
 import FotgotPass from "./Components/FotgotPass";
 import BestDeals from "./Components/BestDeals";
+import Admin from "./Components/Admin";
+import AddPdt from "./Components/Admin/AddPdt";
+import UpdateStocks from "./Components/Admin/UpdateStocks";
+import AddCategory from "./Components/Admin/AddCategory";
+import DeletePdt from "./Components/Admin/DeletePdt";
+import UpdatePdt from "./Components/Admin/UpdatePdt";
 
 const ProtectedRoute = ({ children }) => {
   const [token, setToken] = useState(sessionStorage.getItem("token"));
@@ -61,6 +67,12 @@ const App = () => {
         <Route path="/forgotPassword" element={<FotgotPass />} />
         <Route path="*" element={<NotFound />} />
         <Route path="/bestdeals" element={<BestDeals />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/addPdt" element={<AddPdt />} />
+        <Route path="/updateStocks" element={<UpdateStocks />} />
+        <Route path="/addCategory" element={<AddCategory />} />
+        <Route path="/deletePdt" element={<DeletePdt />} />
+        <Route path="/updatePdt" element={<UpdatePdt />} />
       </Routes>
       <Footer />
     </Router>

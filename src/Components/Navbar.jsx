@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from "react";
-import "../Styles/navbar.css";
 import { Link } from "react-router-dom";
 import { TextField } from "@mui/material";
 import Badge from "@mui/material/Badge";
 import { styled } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { freshData } from "./PizzaSlice";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 
+// Styled Badge for the cart icon
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
     right: -3,
@@ -21,6 +20,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 
+// Filter options for Autocomplete
 const filterOptions = createFilterOptions({
   matchFrom: "start",
   stringify: (option) => option.title,
@@ -28,72 +28,73 @@ const filterOptions = createFilterOptions({
 
 const Navbar = () => {
   const [searchBy, setSearchBy] = useState("");
-
+  const [categories, setcategories] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const top100Films = [
-    { title: "Electronics", year: 1994 },
-    { title: "Clothing", year: 1972 },
-    { title: "Sports", year: 1974 },
-    { title: "Luxury", year: 2008 },
+  const category = [
+    { title: "Electronics" },
+    { title: "Clothing" },
+    { title: "Sports" },
+    { title: "Luxury" },
   ];
 
   useEffect(() => {
+    // Fetch cart data
     if (sessionStorage.getItem("token")) {
-      function cart() {
-        fetch(`http://localhost:8000/cart/${localStorage.getItem('uid')}`)
-          .then((res) => res.json())
-          .then((res) => {
-            dispatch(freshData({ count: res.length }));
-          })
-          .catch((err) => console.log(err.message));
-      }
-      cart();
+      fetch(`http://localhost:8000/cart/${localStorage.getItem("uid")}`)
+        .then((res) => res.json())
+        .then((res) => {
+          dispatch(freshData({ count: res.length }));
+        })
+        .catch((err) => console.log(err.message));
     }
+
+    // Fetch categories
+    fetch("http://localhost:8000/categories")
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.success) {
+          setcategories(res.result);
+        }
+      })
+      .catch((err) => console.log(err.message));
   }, []);
 
   const count = useSelector((store) => store.pizza.count);
-  console.log(count);
 
   return (
-    <div className="flex bg-black text-white p-5">
-      <div className="mx-7 commerce text-5xl">
+    <div className="bg-black text-white p-5 flex items-center justify-between">
+      <div className="text-5xl font-bold text-yellow-400">
         <Link to="/">BuyNest</Link>
       </div>
 
-      <div className="hidden lg:block ">
+      {/* Search bar (visible on large screens) */}
+      <div className="hidden lg:block relative flex-1 max-w-md">
         <Autocomplete
           id="filter-demo"
-          options={top100Films}
+          options={category}
           getOptionLabel={(option) => option.title}
           filterOptions={filterOptions}
           onChange={(event, selectedOption) => {
-            console.log("Selected Option: ", selectedOption);
             navigate(`/category/${selectedOption.title}`);
           }}
-          sx={{ width: 300 }}
+          sx={{ width: "100%" }}
           renderInput={(params) => (
             <TextField
               label="Search"
               variant="outlined"
               sx={{
-                input: {
-                  color: "white",
-                },
-                "& .MuiInputLabel-root": {
-                  color: "white",
-                },
+                input: { color: "white" },
+                "& .MuiInputLabel-root": { color: "white" },
               }}
               style={{
                 backgroundColor: "rgb(50, 50, 50)",
-                width: "25vw",
-                position: "absolute",
-                fontSize: "3rem",
-                marginLeft: "8vw",
+                fontSize: "1.25rem",
                 color: "white",
+                borderRadius: "5px",
               }}
-              className="text-[3rem] rounded text-white"
+              className="w-full"
               {...params}
               onChange={(e) => setSearchBy(e.target.value)}
             />
@@ -101,32 +102,44 @@ const Navbar = () => {
         />
       </div>
 
-      <div className="2xl:mx-[35vw] flex xl:mx-[20vw] lg:mx-[9vw] md:mx-[15vw]">
-        <ul className="flex ul">
+      {/* Navigation links and Cart icon */}
+      <div className="flex items-center space-x-8">
+        <ul className="flex space-x-8 text-lg font-medium">
           <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/bestdeals" className="flex">
-              Best <span>deals</span>
+            <Link to="/" className="hover:text-yellow-400 transition">
+              Home
             </Link>
           </li>
-          <li onClick={() => navigate("/cart/1")}>
-            <IconButton aria-label="cart">
+          <li>
+            <Link to="/bestdeals" className="hover:text-yellow-400 transition">
+              Best <span className="text-yellow-400">deals</span>
+            </Link>
+          </li>
+          <li>
+            <IconButton onClick={() => navigate("/cart/1")} aria-label="cart">
               <StyledBadge badgeContent={count} color="secondary">
-                <ShoppingCartIcon className="text-white text-5xl" />
+                <ShoppingCartIcon className="text-white text-3xl" />
               </StyledBadge>
             </IconButton>
           </li>
           {sessionStorage.getItem("token") ? (
             <li>
-              <Link to="/profile">Profile</Link>
+              <Link to="/profile" className="hover:text-yellow-400 transition">
+                Profile
+              </Link>
             </li>
           ) : (
             <li>
-              <Link to="/login">Login</Link>
+              <Link to="/login" className="hover:text-yellow-400 transition">
+                Login
+              </Link>
             </li>
           )}
+          <li>
+            <Link to="/admin" className="hover:text-yellow-400 transition">
+              Admin
+            </Link>
+          </li>
         </ul>
       </div>
     </div>
