@@ -136,7 +136,7 @@ const Navbar = () => {
             </li>
           )}
          {
-          localStorage.getItem('isAdmin') && <li>
+          (localStorage.getItem('isAdmin') && localStorage.getItem('token')) && <li>
           <Link to="/admin" className="hover:text-yellow-400 transition">
             Admin
           </Link>

@@ -4,17 +4,16 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../Styles/electronics.css";
 import { useNavigate } from "react-router-dom";
+import { FaRupeeSign } from "react-icons/fa";
 
-const Electronics = () => {
+const HomeItems = ({item}) => {
   const navigate = useNavigate();
   const [images, setImages] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8000/electronics")
+    fetch(`http://localhost:8000/${item}`)
       .then((res) => res.json())
       .then((res) => {
-        console.log("_____________________");
-        console.log(res);
         setImages(res);
       });
   }, []);
@@ -42,7 +41,7 @@ const Electronics = () => {
   return (
     <div className="bg-gradient-to-b from-gray-800 to-black text-white py-16 px-8">
       <h2 className="text-center text-4xl font-bold text-white mb-12 tracking-wide">
-        Explore the Latest in Electronics
+        Explore the Latest in {item}
       </h2>
 
       {images.length === 0 ? (
@@ -72,7 +71,10 @@ const Electronics = () => {
                 <p className="text-xl font-semibold tracking-wide group-hover:text-yellow-400 transition-colors duration-300">
                   {image.name}
                 </p>
-                <p className="text-lg mt-2">${image.Price}</p>
+                <p className="text-lg mt-2 flex items-center">
+                  <FaRupeeSign />
+                  {image.Price}
+                </p>
                 <button className="mt-4 bg-yellow-500 text-black py-2 px-4 rounded-lg shadow-md hover:bg-yellow-400 transform transition duration-200">
                   View Product
                 </button>
@@ -85,4 +87,4 @@ const Electronics = () => {
   );
 };
 
-export default Electronics;
+export default HomeItems;

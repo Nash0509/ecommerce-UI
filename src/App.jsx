@@ -29,7 +29,9 @@ import AddCategory from "./Components/Admin/AddCategory";
 import DeletePdt from "./Components/Admin/DeletePdt";
 import UpdatePdt from "./Components/Admin/UpdatePdt";
 import EditPdt from "./Components/Admin/EditPdt";
-
+import EditProfile from "./Components/EditProfile";
+import Success from "./Components/checkout/Success";
+import Cancel from "./Components/checkout/Cancel";
 const ProtectedRoute = ({ children }) => {
   const [token, setToken] = useState(sessionStorage.getItem("token"));
 
@@ -75,6 +77,9 @@ const App = () => {
         <Route path="/deletePdt" element={<DeletePdt />} />
         <Route path="/updatePdt" element={<UpdatePdt />} />
         <Route path="/edit-product/:id" element={<EditPdt />} />
+        <Route path="/editProfile/:id" element={<EditProfile />} />
+        <Route path="/success" element={<Success />} />
+        <Route path="/cancel" element={<Cancel />} />
       </Routes>
       <Footer />
     </Router>

@@ -65,7 +65,7 @@ const Login = () => {
         toast.error("An error occured while logging in : " + err.message);
       }
     } else {
-      toast.error("You are not logged in, please login...");
+      toast.error("An error occured while logging in... ");
     }
   }
 

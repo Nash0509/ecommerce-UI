@@ -4,14 +4,10 @@ import { useEffect, useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import Electronics from "./Electronics";
-import Clothing from "./Clothing";
-import Sports from "./Sports";
-import Luxury from "./Luxury";
 import { useNavigate } from "react-router-dom";
 import { HashLoader } from "react-spinners";
-import Tooltip from "@mui/material/Tooltip";
 import { toast } from "react-toastify";
+import HomeItems from "./HomeItems";
 
 // Import images
 import image from "./images/elect.webp";
@@ -124,19 +120,19 @@ const Home = () => {
 
       <div className="sections">
         <div className="electronics">
-          <Electronics />
+          <HomeItems item='electronics'/>
         </div>
 
         <div className="luxury">
-          <Luxury />
+        <HomeItems item='luxury'/>
         </div>
 
         <div className="clothing">
-          <Clothing />
+        <HomeItems item='clothing'/>
         </div>
 
         <div className="sports">
-          <Sports />
+        <HomeItems item='sports'/>
         </div>
       </div>
 

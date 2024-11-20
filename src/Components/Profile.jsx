@@ -43,17 +43,6 @@ const Profile = () => {
     }
   }, []);
 
-  function handleDeleteHis(index1) {
-    const filteredArray = user.orderHistory.filter(
-      (order, index) => index !== index1
-    );
-
-    setUser((prevUser) => ({
-      ...prevUser,
-      orderHistory: filteredArray,
-    }));
-  }
-
   function handleLogOut() {
     Swal.fire({
       title: "Are you sure?",
@@ -74,7 +63,7 @@ const Profile = () => {
         localStorage.removeItem("uid");
         localStorage.removeItem("token");
         sessionStorage.removeItem("token");
-        localStorage.removeItem('isAdmin');
+        localStorage.removeItem("isAdmin");
         dispatch(makeItZero());
         navigate("/login");
         Swal.fire("Logged out successfully!", "", "success");
@@ -109,19 +98,34 @@ const Profile = () => {
           <div className="md:col-span-2">
             <h2 className="text-xl font-semibold mb-4">Personal Information</h2>
             <p>
-              <strong>Name:</strong> <>{loading ? <GhostLoader /> : user?.name}</>
+              <strong>Name:</strong>{" "}
+              <>{loading ? <GhostLoader /> : user?.name || '-'}</>
             </p>
             <p>
-              <strong>Email:</strong> <>{loading ? <GhostLoader /> : user?.email}</>
+              <strong>Email:</strong>{" "}
+              <>{loading ? <GhostLoader /> : user?.email || '-'}</>
             </p>
             <p>
-              <strong>Phone:</strong> <>{loading ? <GhostLoader /> : user?.phone}</>
+              <strong>Phone:</strong>{" "}
+              <>{loading ? <GhostLoader /> : user?.phone || '-'}</>
             </p>
             <p>
-              <strong>Address:</strong> <>{loading ? <GhostLoader /> : user?.address}</>
+              <strong>Address:</strong>{" "}
+              <>{loading ? <GhostLoader /> : user?.address || '-'}</>
+            </p>
+            <p>
+              <strong>DOB:</strong>{" "}
+              <>{loading ? <GhostLoader /> : user?.DOB.slice(0, 10)}</>
             </p>
             <div className="mt-4">
-              <button className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 transition duration-200">
+              <button
+                className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 transition duration-200"
+                onClick={() =>
+                  navigate(`/editProfile/${localStorage.getItem("uid")}`, {
+                    state: { data: user },
+                  })
+                }
+              >
                 Edit Profile
               </button>
               <button
@@ -137,39 +141,32 @@ const Profile = () => {
         {/* Order History */}
         <div>
           <h2 className="text-xl font-semibold mb-4">Order History</h2>
-                {
-                 profiledata?.cart?.length > 0 ? <table className="w-full table-auto bg-gray-50 rounded-lg">
-                 <thead className="bg-gray-200">
-                   <tr>
-                     <th className="px-4 py-2 text-left">Order ID</th>
-                     <th className="px-4 py-2 text-left">Date</th>
-                     <th className="px-4 py-2 text-left">Total</th>
-                     <th className="px-4 py-2 text-left">Status</th>
-                     <th className="px-4 py-2 text-left text-center">Action</th>
-                   </tr>
-                 </thead>
-                 <tbody>
-                   {user.orderHistory?.map((order, index) => (
-                     <tr key={order.id} className="border-t">
-                       <td className="px-4 py-2">{order.id}</td>
-                       <td className="px-4 py-2">{order.date}</td>
-                       <td className="px-4 py-2">{order.total}</td>
-                       <td className="px-4 py-2">{order.status}</td>
-                       <td className="px-4 py-2 text-center">
-                         <FontAwesomeIcon
-                           icon={faTrash}
-                           size="md"
-                           className="hover:cursor-pointer hover:text-gray-600"
-                           onClick={() => handleDeleteHis(index)}
-                         />
-                       </td>
-                     </tr>
-                   ))}
-                 </tbody>
-               </table>:  <div className="flex justify-center items-center border-2 h-[10vh] bg-[#F4EFC6] rounded">
-               <h3>No order history 😒</h3>
-               </div>
-                }
+          {profiledata?.cart?.length > 0 ? (
+            <table className="w-full table-auto bg-gray-50 rounded-lg">
+              <thead className="bg-gray-200">
+                <tr>
+                  <th className="px-4 py-2 text-left">Order ID</th>
+                  <th className="px-4 py-2 text-left">Date</th>
+                  <th className="px-4 py-2 text-left">Total</th>
+                  <th className="px-4 py-2 text-left">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {user.orderHistory?.map((order, index) => (
+                  <tr key={order.id} className="border-t">
+                  <td className="px-4 py-2">#{order?.id ? order.id.slice(-10) : '-'}</td>
+                    <td className="px-4 py-2">{order?.date ? order.date.slice(0, 10) : '-'}</td>
+                    <td className="px-4 py-2">{order?.price || '-'}</td>
+                    <td className="px-4 py-2">{order?.status || '-'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <div className="flex justify-center items-center border-2 h-[10vh] bg-[#F4EFC6] rounded">
+              <h3>No order history 😒</h3>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -1,63 +1,108 @@
-import React from 'react'
-import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import {toast} from 'react-toastify';
-import { useSelector } from 'react-redux';
-import {FaApplePay} from 'react-icons/fa'
-import { HashLoader } from 'react-spinners';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { RiSecurePaymentLine } from "react-icons/ri";
+import { HashLoader } from "react-spinners";
 
 const Checkout = () => {
+  const [load, setLoad] = useState(true);
+  const total = useSelector((store) => store.pizza.total);
+  const navigate = useNavigate();
 
-    const [load, setLoad] = useState(true);
-    const total = useSelector((store) => store.pizza.total);
+  useEffect(() => {
+    localStorage.setItem("total", total);
+  }, [total]);
 
-    const navigate = useNavigate();
+  useEffect(() => {
+    setTimeout(() => {
+      setLoad(false);
+    }, 500);
+  }, []);
 
-    useEffect(() => {
-      
-        setTimeout(() => {
-             setLoad(false);
-        }, 500)
-   
-     }, [])
-    
-
-   useEffect(() => {
-
-     fetch('https://ecommerce-l97b.onrender.com/checkout', {
-        'method' : 'GET',
-        headers : {
-            'Content-Type' : 'application/json',
-            'auth' : sessionStorage.getItem('token')
-        } 
-     })
-     .then((res) => res.json())
-     .then((res) => {
+  useEffect(() => {
+    fetch("https://ecommerce-l97b.onrender.com/checkout", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        auth: sessionStorage.getItem("token"),
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Unauthorized or expired token");
+        return res.json();
+      })
+      .then((res) => {
         console.log(res.message);
-     })
-     .catch((err) => {
-        
-       navigate('/login');
-       console.log(err.message);
-       toast.warning("You need to login/register first...")
+      })
+      .catch(() => {
+        handleSessionExpiration();
+      });
+  }, []);
 
-     })
+  const handleSessionExpiration = () => {
+    navigate("/login");
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
+    localStorage.removeItem("uid");
+    toast.warning("Your token has expired. Please sign in again.");
+  };
 
-   }, [])
+  const handleCheckout = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/create-checkout-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ price: total }),
+      });
 
-   if (load) {
-    return <div className='h-[70vh] flex justify-center' style={{alignItems:'center'}}><HashLoader size={100}/></div>;
+      const res = await response.json();
+
+      if (response.ok && res.url) {
+        window.location.href = res.url;
+      } else {
+        toast.error("Failed to initiate checkout session.");
+      }
+    } catch (error) {
+      toast.error(error.message || "An error occurred while processing your request.");
+    }
+  };
+
+  if (load) {
+    return (
+      <div className="h-screen flex flex-col justify-center items-center bg-gray-100">
+        <HashLoader size={100} color="#4A90E2" />
+        <p className="mt-4 text-gray-600 text-lg font-medium">
+          Preparing your checkout...
+        </p>
+      </div>
+    );
   }
 
   return (
-    <div className='p-7 h-[100vh] mt-[15vh]'>
-        <p className='bg-[blue] text-white rounded w-[30vw] m-auto text-center p-3 text-[1.5rem]'>Pay &nbsp;:&nbsp; Rs. {total}</p>
-      
-      <div className='text-center mt-4 '>
-       <button className='rounded bg-[black] text-white px-5'><a href="https://buy.stripe.com/test_dR64j7bZa18H20UdQQ" ><FaApplePay size={70}/></a></button>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4 py-8">
+      <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-6">
+        <h1 className="text-center text-2xl font-bold text-gray-800 mb-6">
+          Checkout
+        </h1>
+        <p className="bg-blue-500 text-white font-medium rounded-md py-3 px-4 text-center mb-4 shadow">
+          Total Payment: <span className="font-semibold">Rs. {total}</span>
+        </p>
+        <div className="flex justify-center">
+          <button
+            className="flex items-center justify-center rounded-lg bg-black text-white px-6 py-3 hover:bg-gray-800 transition duration-200 shadow-lg"
+            onClick={handleCheckout}
+            aria-label="Proceed to payment"
+          >
+            <RiSecurePaymentLine size={50} className="mr-2" />
+            <span className="text-lg font-semibold">Pay Now</span>
+          </button>
+        </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Checkout
+export default Checkout;

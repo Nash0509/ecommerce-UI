@@ -52,14 +52,11 @@ const Cart = () => {
   }, []);
 
   useEffect(() => {
+    localStorage.removeItem('total');
     try {
       fetch(`http://localhost:8000/cart/${localStorage.getItem('uid')}`)
         .then((res) => res.json())
         .then((res) => {
-          console.log(
-            "This is the variety of the Thing that I want to achieve..."
-          );
-          console.log(res);
           setItems(res);
           const totalPrice = res.reduce((acc, cur) => {
             if (cur.hasOwnProperty("price") && typeof cur.price === "number") {
