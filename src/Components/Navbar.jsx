@@ -28,16 +28,9 @@ const filterOptions = createFilterOptions({
 
 const Navbar = () => {
   const [searchBy, setSearchBy] = useState("");
-  const [categories, setcategories] = useState("");
+  const [category, setCategory] = useState([]); // State for category data
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const category = [
-    { title: "Electronics" },
-    { title: "Clothing" },
-    { title: "Sports" },
-    { title: "Luxury" },
-  ];
 
   useEffect(() => {
     // Fetch cart data
@@ -55,11 +48,12 @@ const Navbar = () => {
       .then((res) => res.json())
       .then((res) => {
         if (res.success) {
-          setcategories(res.result);
+          // Update state with categories
+          setCategory(res.cate.map((catego) => ({ title: catego })));
         }
       })
       .catch((err) => console.log(err.message));
-  }, []);
+  }, [dispatch]);
 
   const count = useSelector((store) => store.pizza.count);
 
@@ -77,7 +71,10 @@ const Navbar = () => {
           getOptionLabel={(option) => option.title}
           filterOptions={filterOptions}
           onChange={(event, selectedOption) => {
-            navigate(`/category/${selectedOption.title}`);
+            if (selectedOption) {
+              navigate(`/category/${selectedOption.title}`);
+              setSearchBy("");
+            }
           }}
           sx={{ width: "100%" }}
           renderInput={(params) => (
@@ -135,13 +132,13 @@ const Navbar = () => {
               </Link>
             </li>
           )}
-         {
-          (localStorage.getItem('isAdmin') && localStorage.getItem('token')) && <li>
-          <Link to="/admin" className="hover:text-yellow-400 transition">
-            Admin
-          </Link>
-        </li>
-         }
+          {localStorage.getItem("isAdmin") && localStorage.getItem("token") && (
+            <li>
+              <Link to="/admin" className="hover:text-yellow-400 transition">
+                Admin
+              </Link>
+            </li>
+          )}
         </ul>
       </div>
     </div>

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
 import { RiSecurePaymentLine } from "react-icons/ri";
 import { HashLoader } from "react-spinners";
+import { total } from "./PizzaSlice";
 
 const Checkout = () => {
   const [load, setLoad] = useState(true);
-  const total = useSelector((store) => store.pizza.total);
+  const [redirectWait, setRedirectWait] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -50,23 +50,42 @@ const Checkout = () => {
 
   const handleCheckout = async () => {
     try {
-      const response = await fetch("http://localhost:8000/create-checkout-session", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ price: total }),
-      });
+      // Fetch cart items
+      setRedirectWait(true);
+      const cartResponse = await fetch(
+        `http://localhost:8000/cart/${localStorage.getItem("uid")}`
+      );
 
-      const res = await response.json();
+      if (!cartResponse.ok) {
+        throw new Error("Failed to fetch cart items.");
+      }
 
-      if (response.ok && res.url) {
-        window.location.href = res.url;
+      const cartItems = await cartResponse.json();
+      // Proceed to create the checkout session
+      const checkoutResponse = await fetch(
+        "http://localhost:8000/create-checkout-session",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(cartItems), // Send populated cartItems
+        }
+      );
+
+      const checkoutData = await checkoutResponse.json();
+
+      if (checkoutResponse.ok && checkoutData.url) {
+        // Redirect to the Stripe checkout session
+        setRedirectWait(false);
+        window.location.href = checkoutData.url;
       } else {
         toast.error("Failed to initiate checkout session.");
       }
     } catch (error) {
-      toast.error(error.message || "An error occurred while processing your request.");
+      toast.error(
+        error.message || "An error occurred while processing your request."
+      );
     }
   };
 
@@ -88,16 +107,29 @@ const Checkout = () => {
           Checkout
         </h1>
         <p className="bg-blue-500 text-white font-medium rounded-md py-3 px-4 text-center mb-4 shadow">
-          Total Payment: <span className="font-semibold">Rs. {total}</span>
+          Total Payment:{" "}
+          <span className="font-semibold">
+            Rs. {localStorage.getItem("cartTotal")}
+          </span>
         </p>
         <div className="flex justify-center">
           <button
             className="flex items-center justify-center rounded-lg bg-black text-white px-6 py-3 hover:bg-gray-800 transition duration-200 shadow-lg"
             onClick={handleCheckout}
             aria-label="Proceed to payment"
+            disabled={redirectWait} // Disable button during loading
           >
-            <RiSecurePaymentLine size={50} className="mr-2" />
-            <span className="text-lg font-semibold">Pay Now</span>
+            {redirectWait ? (
+              <div className="flex items-center">
+                <span className="loader w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                <span className="text-lg font-semibold">Processing...</span>
+              </div>
+            ) : (
+              <>
+                <RiSecurePaymentLine size={50} className="mr-2" />
+                <span className="text-lg font-semibold">Pay Now</span>
+              </>
+            )}
           </button>
         </div>
       </div>

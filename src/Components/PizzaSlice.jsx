@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   count: 0,
   total: 0,
+  deleteItemPrice : 0
 };
 
 export const PizzaSlice = createSlice({
@@ -11,6 +12,7 @@ export const PizzaSlice = createSlice({
   reducers: {
     addToCart: (state, action) => {
       state.count = state.count + 1;
+      state.total = state.total + action.payload.price;
     },
     makeItZero: (state, action) => {
       state.count = 0;
@@ -19,11 +21,16 @@ export const PizzaSlice = createSlice({
       state.count = action.payload.count;
     },
     total: (state, action) => {
-      state.total = action.payload.total;
+      state.total = state.total + action.payload.total;
+      console.log("Price from th eslicve", state.total);
     },
     minusOne: (state, action) => {
       state.count = state.count - 1;
+      state.total = state.total - action.payload.price;
     },
+    deleteItemPrice: (state, action) => {
+          state.deleteItemPrice = action.payload.price;
+    }
   },
 });
 

@@ -52,9 +52,7 @@ const Product = () => {
         const productData = await productRes.json();
         setProduct(productData);
 
-        const reviewRes = await fetch(
-          `https://ecommerce-l97b.onrender.com/reviews/${id}`
-        );
+        const reviewRes = await fetch(`http://localhost:8000/reviews/${id}`);
         const reviewData = await reviewRes.json();
         const averageRating =
           reviewData.reduce((acc, review) => acc + review.rating, 0) /
@@ -71,6 +69,26 @@ const Product = () => {
     };
 
     fetchProductData();
+
+    const incWatchCount = async () => {
+      fetch(`http://localhost:8000/trendSetter/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "Application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.success) {
+             console.log(1);
+          }
+        })
+        .catch((err) =>
+          toast.error("There was an error while increasing the watch Count...")
+        );
+    };
+
+    incWatchCount();
   }, [id]);
 
   const handleAddToCart = async () => {
@@ -95,7 +113,6 @@ const Product = () => {
 
       const result = await response.json();
       if (result.success) {
-        dispatch(addToCart({ price: product.Price }));
         toast.success("Item added to cart!");
       }
     } catch (error) {

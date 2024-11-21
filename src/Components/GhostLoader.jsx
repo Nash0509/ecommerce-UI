@@ -2,7 +2,7 @@ import React from 'react'
 
 const GhostLoader = () => {
   return (
-    <>GhostLoader...</>
+    <>Loading...</>
   )
 }
 

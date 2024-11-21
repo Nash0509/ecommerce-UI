@@ -3,9 +3,13 @@ import { Link } from "react-router-dom";
 import Lottie from "lottie-react";
 import successAnimation from "./success-animation.json";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { makeItZero } from "../PizzaSlice";
 
 const Success = () => {
   const [cartItems, setCartItems] = useState([]);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const storedItems = JSON.parse(localStorage.getItem("cart")) || [];
@@ -16,7 +20,8 @@ const Success = () => {
       .then((res) => res.json())
       .then((res) => {
         setCartItems(res);
-
+        console.log("This is the cart items...");
+        console.log(res);
         if (localStorage.getItem("uid")) {
           fetch(
             `http://localhost:8000/updateUserPurchaseStatus/${localStorage.getItem(
@@ -30,9 +35,9 @@ const Success = () => {
               body: JSON.stringify(res),
             }
           )
-            .then((res) => res.json())
-            .then((res) => {
-              if (res.success) {
+            .then((resp) => resp.json())
+            .then((resp) => {
+              if (resp.success) {
                 toast.success("Updated the user Profile");
                 async function handleDelete(id) {
                     try {
@@ -40,14 +45,13 @@ const Success = () => {
                         method: "DELETE",
                         headers: { "Content-Type": "application/json" },
                       })
-                        .then((res) => res.json())
-                        .then((res) => {
+                        .then((respo) => respo.json())
+                        .then((respo) => {
                           toast.success("Item removed from the cart successfully!");
-                        //   dispatch(minusOne());
+                          dispatch(makeItZero());
                         });
                     } catch (err) {
                       toast.error("Its not you its us 😣, please try again...");
-                      alert(err);
                     }
                   }
                   res.forEach((res) => {

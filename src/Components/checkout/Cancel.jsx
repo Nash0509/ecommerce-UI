@@ -1,21 +1,30 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { FaSadCry } from 'react-icons/fa';
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { FaSadCry } from "react-icons/fa";
+import Lottie from "lottie-react";
+import CancelAnimation from "./cancel-animation.json";
 
 const Cancel = () => {
   const navigate = useNavigate();
 
   const handleRetry = () => {
-    navigate('/checkout');
+    navigate("/checkout");
   };
 
   return (
     <div className="h-screen flex flex-col items-center justify-center bg-gray-100 text-gray-800">
       <div className="text-center p-5 bg-white shadow-md rounded-md">
-        <FaSadCry size={50} className="text-red-500 mb-3 mx-auto" />
+        <div className="flex justify-center">
+          <Lottie
+            animationData={CancelAnimation}
+            loop={false}
+            style={{ width: 200, height: 200 }}
+          />
+        </div>
         <h1 className="text-2xl font-bold mb-3">Payment Canceled</h1>
         <p className="mb-5">
-          It seems like you canceled the payment. If you wish to proceed with the order, you can try again.
+          It seems like you canceled the payment. If you wish to proceed with
+          the order, you can try again.
         </p>
         <div className="flex space-x-4 justify-center">
           <button

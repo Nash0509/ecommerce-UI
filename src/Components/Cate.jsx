@@ -16,7 +16,7 @@ const Cate = () => {
     setLoad(true);
 
     const timeoutId = setTimeout(() => {
-      fetch(`https://ecommerce-l97b.onrender.com/${id.toLowerCase()}`)
+      fetch(`http://localhost:8000/${id.toLowerCase()}`)
         .then((response) => response.json())
         .then((data) => {
           setRes(data);

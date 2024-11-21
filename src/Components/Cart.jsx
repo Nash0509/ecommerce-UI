@@ -59,12 +59,11 @@ const Cart = () => {
         .then((res) => {
           setItems(res);
           const totalPrice = res.reduce((acc, cur) => {
-            if (cur.hasOwnProperty("price") && typeof cur.price === "number") {
-              return acc + cur.price;
+            if (cur.hasOwnProperty("Price") && typeof cur.Price === "number") {
+              return acc + cur.Price;
             }
             return acc;
           }, 0);
-
           dispatch(total({ total: totalPrice }));
         })
         .catch(() => console.log("Error in fetching cart items!"));
@@ -84,7 +83,7 @@ const Cart = () => {
     );
   }
 
-  async function handleDelete(id) {
+  async function handleDelete(id, price) {
     try {
       await fetch(`http://localhost:8000/deleteItem/${id}`, {
         method: "DELETE",
@@ -95,7 +94,7 @@ const Cart = () => {
           toast.success("Item removed from the cart successfully!");
           setOpen(false);
           setItems((pre) => pre.filter((pdt) => pdt._id !== id));
-          dispatch(minusOne());
+          dispatch(minusOne({price : price}));
         });
     } catch (err) {
       toast.error("Its not you its us 😣, please try again...");
@@ -115,7 +114,10 @@ const Cart = () => {
             onClick={() => {
               if (items.length === 0) {
                 toast.warning("No items in the cart...");
-              } else navigate("/checkout");
+              } else {
+                navigate("/checkout");
+                localStorage.setItem('cartTotal', total1)
+              }
             }}
           >
             Checkout
@@ -169,7 +171,7 @@ const Cart = () => {
                           className="text-center"
                         >
                           <button
-                            onClick={() => handleDelete(pdt._id)}
+                            onClick={() => handleDelete(pdt._id, pdt.Price)}
                             className="rounded bg-[blue] px-2 text-white ml-3 p-2 mt-4"
                           >
                             yes, I am sure!
