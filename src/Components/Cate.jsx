@@ -14,15 +14,31 @@ const Cate = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     setLoad(true);
-
     const timeoutId = setTimeout(() => {
-      fetch(`http://localhost:8000/${id.toLowerCase()}`)
-        .then((response) => response.json())
-        .then((data) => {
-          setRes(data);
-          setLoad(false);
-        })
-        .catch(() => setLoad(false));
+      if (
+        id == "Electronics" ||
+        id == "Luxury" ||
+        id == "Sports" ||
+        id == "Clothing"
+      ) {
+        fetch(`http://localhost:8000/${id.toLowerCase()}`)
+          .then((response) => response.json())
+          .then((data) => {
+            setRes(data);
+            setLoad(false);
+          })
+          .catch(() => setLoad(false));
+      } else {
+        fetch(`http://localhost:8000/category/${id}`)
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              setRes(data.result);
+            }
+            setLoad(false);
+          })
+          .catch(() => setLoad(false));
+      }
     }, 500);
 
     return () => clearTimeout(timeoutId);

@@ -38,7 +38,6 @@ const Success = () => {
             .then((resp) => resp.json())
             .then((resp) => {
               if (resp.success) {
-                toast.success("Updated the user Profile");
                 async function handleDelete(id) {
                     try {
                       await fetch(`http://localhost:8000/deleteItem/${id}`, {
@@ -47,7 +46,6 @@ const Success = () => {
                       })
                         .then((respo) => respo.json())
                         .then((respo) => {
-                          toast.success("Item removed from the cart successfully!");
                           dispatch(makeItZero());
                         });
                     } catch (err) {
@@ -96,7 +94,7 @@ const Success = () => {
                   className="bg-gray-100 p-2 rounded shadow-sm flex justify-between items-center"
                 >
                   <span>{item.name}</span>
-                  <span>₹{item.price}</span>
+                  <span>₹{item.Price}</span>
                 </li>
               ))
             ) : (

@@ -12,7 +12,6 @@ export const PizzaSlice = createSlice({
   reducers: {
     addToCart: (state, action) => {
       state.count = state.count + 1;
-      state.total = state.total + action.payload.price;
     },
     makeItZero: (state, action) => {
       state.count = 0;
@@ -22,7 +21,6 @@ export const PizzaSlice = createSlice({
     },
     total: (state, action) => {
       state.total = state.total + action.payload.total;
-      console.log("Price from th eslicve", state.total);
     },
     minusOne: (state, action) => {
       state.count = state.count - 1;

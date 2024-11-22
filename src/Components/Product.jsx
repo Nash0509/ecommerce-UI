@@ -113,7 +113,7 @@ const Product = () => {
 
       const result = await response.json();
       if (result.success) {
-        toast.success("Item added to cart!");
+        dispatch(addToCart());
       }
     } catch (error) {
       toast.error("Failed to add item to cart.");

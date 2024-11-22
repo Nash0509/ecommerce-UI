@@ -91,14 +91,12 @@ const Cart = () => {
       })
         .then((res) => res.json())
         .then((res) => {
-          toast.success("Item removed from the cart successfully!");
           setOpen(false);
           setItems((pre) => pre.filter((pdt) => pdt._id !== id));
           dispatch(minusOne({price : price}));
         });
     } catch (err) {
       toast.error("Its not you its us 😣, please try again...");
-      alert(err);
     }
   }
 
@@ -213,7 +211,7 @@ const CartItem = ({ pdt }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    fetch(`https://ecommerce-l97b.onrender.com/product/${pdt.id}`)
+    fetch(`http://localhost:8000/product/${pdt.id}`)
       .then((res) => res.json())
       .then((res) => {
         setProduct(res);

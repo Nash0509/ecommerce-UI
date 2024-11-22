@@ -30,7 +30,6 @@ const AddPdt = () => {
       .then((res) => res.json())
       .then((res) => {
         if (res.success) {
-          toast.success("Got the category");
           setTypes(res.cate);
         } else {
           toast.error("Failed to get category");

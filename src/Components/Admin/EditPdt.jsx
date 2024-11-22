@@ -27,7 +27,6 @@ const EditPdt = () => {
           image: data.image || ""
         });
         setLoading(false);
-        toast.success("Fetched product data successfully!");
       } catch (error) {
         toast.error("Failed to fetch product data.");
         setLoading(false);
@@ -59,7 +58,7 @@ const EditPdt = () => {
       const result = await response.json();
       if (result.success) {
         toast.success("Product updated successfully!");
-        navigate("/");
+        navigate(-1);
       } else {
         toast.error("Failed to update product.");
       }
