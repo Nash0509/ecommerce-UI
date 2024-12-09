@@ -36,7 +36,7 @@ const BestDeals = () => {
   // Fetch all data initially
   useEffect(() => {
     setLoading(true);
-    fetch("http://localhost:8000/getTrends")
+    fetch("/api/v1/trends/getTrends")
       .then((res) => res.json())
       .then((res) => {
         if (res.success) {

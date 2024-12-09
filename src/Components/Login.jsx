@@ -18,7 +18,7 @@ const Login = () => {
 
     if (!sessionStorage.getItem("token")) {
       try {
-        const log = await fetch("http://localhost:8000/login", {
+        const log = await fetch("/api/v1/auth/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -41,7 +41,7 @@ const Login = () => {
           toast.success("Logged in successfully!");
           if (localStorage.getItem("token")) {
             function cart() {
-              fetch(`http://localhost:8000/cart/${localStorage.getItem("uid")}`)
+              fetch(`/api/v1/cart/${localStorage.getItem("uid")}`)
                 .then((res) => res.json())
                 .then((res) => {
                   dispatch(freshData({ count: res.length }));

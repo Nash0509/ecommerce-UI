@@ -54,7 +54,7 @@ const Cart = () => {
   useEffect(() => {
     localStorage.removeItem('total');
     try {
-      fetch(`http://localhost:8000/cart/${localStorage.getItem('uid')}`)
+      fetch(`/api/v1/cart/${localStorage.getItem('uid')}`)
         .then((res) => res.json())
         .then((res) => {
           setItems(res);
@@ -85,7 +85,7 @@ const Cart = () => {
 
   async function handleDelete(id, price) {
     try {
-      await fetch(`http://localhost:8000/deleteItem/${id}`, {
+      await fetch(`/api/v1/products/deleteItem/${id}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
       })
@@ -211,7 +211,7 @@ const CartItem = ({ pdt }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    fetch(`http://localhost:8000/product/${pdt.id}`)
+    fetch(`/api/v1/product/product/${pdt.id}`)
       .then((res) => res.json())
       .then((res) => {
         setProduct(res);

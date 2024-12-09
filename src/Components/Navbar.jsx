@@ -35,7 +35,7 @@ const Navbar = () => {
   useEffect(() => {
     // Fetch cart data
     if (sessionStorage.getItem("token")) {
-      fetch(`http://localhost:8000/cart/${localStorage.getItem("uid")}`)
+      fetch(`/api/v1/cart/${localStorage.getItem("uid")}`)
         .then((res) => res.json())
         .then((res) => {
           dispatch(freshData({ count: res.length }));
@@ -44,7 +44,7 @@ const Navbar = () => {
     }
 
     // Fetch categories
-    fetch("http://localhost:8000/categories")
+    fetch("/api/v1/category")
       .then((res) => res.json())
       .then((res) => {
         if (res.success) {

@@ -18,7 +18,7 @@ const EditPdt = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/product/${id}`);
+        const response = await fetch(`/api/v1/product/product/${id}`);
         const data = await response.json();
         setProduct({
           name: data.name || "",
@@ -47,7 +47,7 @@ const EditPdt = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:8000/patchPdt/${id}`, {
+      const response = await fetch(`/api/v1/products/patchPdt/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

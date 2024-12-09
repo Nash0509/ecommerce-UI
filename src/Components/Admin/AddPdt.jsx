@@ -26,7 +26,7 @@ const AddPdt = () => {
   const [types, setTypes] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8000/categories")
+    fetch("/api/v1/category")
       .then((res) => res.json())
       .then((res) => {
         if (res.success) {
@@ -45,7 +45,7 @@ const AddPdt = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    fetch("http://localhost:8000/addPdt", {
+    fetch("/api/v1/products/addPdt", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

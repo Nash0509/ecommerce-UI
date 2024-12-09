@@ -23,7 +23,7 @@ const Contact = () => {
 
     if (DOB && residence && phone) {
       try {
-        const log = await fetch("http://localhost:8000/register", {
+        const log = await fetch("/api/v1/auth/register", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

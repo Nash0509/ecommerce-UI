@@ -16,15 +16,13 @@ const Success = () => {
     setCartItems(storedItems);
     localStorage.removeItem("cart");
 
-    fetch(`http://localhost:8000/cart/${localStorage.getItem("uid")}`)
+    fetch(`api/v1/cart/${localStorage.getItem("uid")}`)
       .then((res) => res.json())
       .then((res) => {
         setCartItems(res);
-        console.log("This is the cart items...");
-        console.log(res);
         if (localStorage.getItem("uid")) {
           fetch(
-            `http://localhost:8000/updateUserPurchaseStatus/${localStorage.getItem(
+            `/api/v1/checkout/updateUserPurchaseStatus/${localStorage.getItem(
               "uid"
             )}`,
             {
@@ -40,7 +38,7 @@ const Success = () => {
               if (resp.success) {
                 async function handleDelete(id) {
                     try {
-                      await fetch(`http://localhost:8000/deleteItem/${id}`, {
+                      await fetch(`api/v1/deleteItem/${id}`, {
                         method: "DELETE",
                         headers: { "Content-Type": "application/json" },
                       })

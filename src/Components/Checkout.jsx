@@ -21,7 +21,7 @@ const Checkout = () => {
   }, []);
 
   useEffect(() => {
-    fetch("https://ecommerce-l97b.onrender.com/checkout", {
+    fetch("/api/v1/checkout", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -53,7 +53,7 @@ const Checkout = () => {
       // Fetch cart items
       setRedirectWait(true);
       const cartResponse = await fetch(
-        `http://localhost:8000/cart/${localStorage.getItem("uid")}`
+        `/api/v1/cart/${localStorage.getItem("uid")}`
       );
 
       if (!cartResponse.ok) {
@@ -63,7 +63,7 @@ const Checkout = () => {
       const cartItems = await cartResponse.json();
       // Proceed to create the checkout session
       const checkoutResponse = await fetch(
-        "http://localhost:8000/create-checkout-session",
+        "/api/v1/checkout/create-checkout-session",
         {
           method: "POST",
           headers: {

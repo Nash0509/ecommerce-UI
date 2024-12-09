@@ -31,7 +31,7 @@ const EditProfile = () => {
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch(`http://localhost:8000/editProfile/${id}`, {
+    fetch(`/api/v1/auth/editProfile/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

@@ -11,7 +11,7 @@ const HomeItems = ({item}) => {
   const [images, setImages] = useState([]);
 
   useEffect(() => {
-    fetch(`http://localhost:8000/${item}`)
+    fetch(`/api/v1/product/${item}`)
       .then((res) => res.json())
       .then((res) => {
         setImages(res);

@@ -48,11 +48,11 @@ const Product = () => {
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const productRes = await fetch(`http://localhost:8000/product/${id}`);
+        const productRes = await fetch(`/api/v1/product/product/${id}`);
         const productData = await productRes.json();
         setProduct(productData);
 
-        const reviewRes = await fetch(`http://localhost:8000/reviews/${id}`);
+        const reviewRes = await fetch(`/api/v1/reviews/reviews/${id}`);
         const reviewData = await reviewRes.json();
         const averageRating =
           reviewData.reduce((acc, review) => acc + review.rating, 0) /
@@ -71,7 +71,7 @@ const Product = () => {
     fetchProductData();
 
     const incWatchCount = async () => {
-      fetch(`http://localhost:8000/trendSetter/${id}`, {
+      fetch(`/api/v1/trends/trendSetter/${id}`, {
         method: "POST",
         headers: {
           "Content-Type": "Application/json",
@@ -100,7 +100,7 @@ const Product = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/pdt/${id}/${product.Price}`,
+        `/api/v1/cart/addToCart/${id}/${product.Price}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -123,7 +123,7 @@ const Product = () => {
 
   const handleReviewSubmit = async () => {
     try {
-      await fetch(`https://ecommerce-l97b.onrender.com/review/${id}`, {
+      await fetch(`/api/v1/reviews/review/${id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ review: reviewInput, rating }),
@@ -135,7 +135,7 @@ const Product = () => {
   };
 
   const handleDelete = () => {
-    fetch(`http://localhost:8000/deletePdt/${id}`, {
+    fetch(`/api/v1/products/deletePdt/${id}`, {
       method: "DELETE",
     })
       .then((res) => res.json())

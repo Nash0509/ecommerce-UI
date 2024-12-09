@@ -21,7 +21,7 @@ const AddCategory = () => {
     }
     // Handle form submission logic here
     console.log({ categoryName, description });
-    fetch("http://localhost:8000/addType", {
+    fetch("/api/v1/typeOps/addType", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

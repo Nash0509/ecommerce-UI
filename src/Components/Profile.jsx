@@ -16,7 +16,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     try {
-      fetch(`http://localhost:8000/profile/${localStorage.getItem("uid")}`)
+      fetch(`/api/v1/auth/profile/${localStorage.getItem("uid")}`)
         .then((res) => res.json())
         .then((res) => {
           if (res.success) {

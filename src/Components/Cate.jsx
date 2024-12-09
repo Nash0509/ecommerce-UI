@@ -21,7 +21,7 @@ const Cate = () => {
         id == "Sports" ||
         id == "Clothing"
       ) {
-        fetch(`http://localhost:8000/${id.toLowerCase()}`)
+        fetch(`/api/v1/product/${id.toLowerCase()}`)
           .then((response) => response.json())
           .then((data) => {
             setRes(data);
@@ -29,7 +29,7 @@ const Cate = () => {
           })
           .catch(() => setLoad(false));
       } else {
-        fetch(`http://localhost:8000/category/${id}`)
+        fetch(`/api/v1/category/${id}`)
           .then((response) => response.json())
           .then((data) => {
             if (data.success) {
