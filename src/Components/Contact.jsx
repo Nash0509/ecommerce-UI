@@ -34,7 +34,7 @@ const Contact = () => {
             phone: phone,
             DOB: DOB,
             residence: residence,
-            userName: name
+            userName: name,
           }),
         });
 

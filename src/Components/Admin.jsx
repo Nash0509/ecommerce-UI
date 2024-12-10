@@ -1,18 +1,6 @@
 import React from "react";
-import {
-  Button,
-  TextField,
-  Card,
-  CardContent,
-  Typography,
-} from "@mui/material";
-import {
-  FaPlus,
-  FaEdit,
-  FaTrash,
-  FaClipboardList,
-  FaTags,
-} from "react-icons/fa";
+import { Button, Card, CardContent, Typography } from "@mui/material";
+import { FaClipboardList, FaTags } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const Admin = () => {

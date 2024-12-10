@@ -120,19 +120,19 @@ const Home = () => {
 
       <div className="sections">
         <div className="electronics">
-          <HomeItems item='electronics'/>
+          <HomeItems item="electronics" />
         </div>
 
         <div className="luxury">
-        <HomeItems item='luxury'/>
+          <HomeItems item="luxury" />
         </div>
 
         <div className="clothing">
-        <HomeItems item='clothing'/>
+          <HomeItems item="clothing" />
         </div>
 
         <div className="sports">
-        <HomeItems item='sports'/>
+          <HomeItems item="sports" />
         </div>
       </div>
 

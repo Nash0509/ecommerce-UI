@@ -114,7 +114,9 @@ const BestDeals = () => {
 
               {/* Product Description */}
               <div className="flex flex-col flex-grow md:ml-8 mt-4 md:mt-0">
-                <p className="text-xl font-semibold text-gray-800">{pdt.name}</p>
+                <p className="text-xl font-semibold text-gray-800">
+                  {pdt.name}
+                </p>
                 <p className="text-lg flex items-center text-gray-600 mt-2">
                   Price:&nbsp;
                   <FaRupeeSign className="text-green-500" />

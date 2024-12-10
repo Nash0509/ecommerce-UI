@@ -6,7 +6,7 @@ import "../Styles/electronics.css";
 import { useNavigate } from "react-router-dom";
 import { FaRupeeSign } from "react-icons/fa";
 
-const HomeItems = ({item}) => {
+const HomeItems = ({ item }) => {
   const navigate = useNavigate();
   const [images, setImages] = useState([]);
 

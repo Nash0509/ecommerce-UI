@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   count: 0,
   total: 0,
-  deleteItemPrice : 0
+  deleteItemPrice: 0,
 };
 
 export const PizzaSlice = createSlice({
@@ -27,8 +27,8 @@ export const PizzaSlice = createSlice({
       state.total = state.total - action.payload.price;
     },
     deleteItemPrice: (state, action) => {
-          state.deleteItemPrice = action.payload.price;
-    }
+      state.deleteItemPrice = action.payload.price;
+    },
   },
 });
 

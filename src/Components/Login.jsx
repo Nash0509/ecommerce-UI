@@ -35,7 +35,7 @@ const Login = () => {
           setToken(res.token);
           localStorage.setItem("uid", res.result._id);
           sessionStorage.setItem("token", res.token);
-          if(res.result.isAdmin) {
+          if (res.result.isAdmin) {
             localStorage.setItem("isAdmin", res.result.isAdmin);
           }
           toast.success("Logged in successfully!");

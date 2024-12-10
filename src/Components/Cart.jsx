@@ -52,9 +52,9 @@ const Cart = () => {
   }, []);
 
   useEffect(() => {
-    localStorage.removeItem('total');
+    localStorage.removeItem("total");
     try {
-      fetch(`/api/v1/cart/${localStorage.getItem('uid')}`)
+      fetch(`/api/v1/cart/${localStorage.getItem("uid")}`)
         .then((res) => res.json())
         .then((res) => {
           setItems(res);
@@ -93,7 +93,7 @@ const Cart = () => {
         .then((res) => {
           setOpen(false);
           setItems((pre) => pre.filter((pdt) => pdt._id !== id));
-          dispatch(minusOne({price : price}));
+          dispatch(minusOne({ price: price }));
         });
     } catch (err) {
       toast.error("Its not you its us 😣, please try again...");
@@ -114,7 +114,7 @@ const Cart = () => {
                 toast.warning("No items in the cart...");
               } else {
                 navigate("/checkout");
-                localStorage.setItem('cartTotal', total1)
+                localStorage.setItem("cartTotal", total1);
               }
             }}
           >
